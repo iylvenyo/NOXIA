@@ -42,7 +42,6 @@ class NoxiaWindow(Gtk.ApplicationWindow):
         return True
 
     def resize_noxia(self, area, width, height):
-        
         self.simulation.width = width
         self.simulation.height = height
 

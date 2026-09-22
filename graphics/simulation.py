@@ -20,28 +20,21 @@ class NoxiaSimulation:
     def __init__(self):
         self.width = DEFAULT_WIDTH
         self.height = DEFAULT_HEIGHT
-
         self.arms_count = ARMS
         self.finpoints = FINPOINTS
         self.line_width = LINE_WIDTH
         self.withdraw = WITHDRAW
         self.turn_delta = TURN_DELTA
-
         self.mx = self.width - 1
         self.my = self.height - 1
-
         self.turn = 0.0
         self.frame = 0
-
         self.seed = DEFAULT_SEED
         self.rng = random.Random(self.seed)
-
         self.palette = self.make_smooth_palette(COLORS)
-
         self.arms = []
         self.points = []
         self.commands = []
-
         self.initialize()
 
     def rnd(self, limit):
@@ -80,11 +73,9 @@ class NoxiaSimulation:
         
         self.mx = self.width - 1
         self.my = self.height - 1
-
         self.arms = []
         self.points = []
         self.commands = []
-
         self.turn = 0.0
         self.frame = 0
 

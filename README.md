@@ -1,25 +1,40 @@
 
-you will need python3, git, and GTK4
+you will need python, git, gtk4, and MSYS2 (If on windows)
 
-clone it:
+> [!NOTE]
+> pip can't install PyGoObject on powershell on windows without having an aneurysm. I'd recommend installing
+and using MSYS2 UCRT64 or maybe use WSL...
+
+windows / MSYS2:
+
+install MSYS2 from https://www.msys2.org/
+
+open **MSYS2 UCRT64** (not PowerShell) and run:
+
+```bash
+pacman -Syu
+```
+
+if it tells you to close the terminal, close it, reopen **MSYS2 UCRT64**, and run the update command again:
+
+```bash
+pacman -Syu
+```
+
+then install the stuff NOXIA needs:
+
+```bash
+pacman -S mingw-w64-ucrt-x86_64-gtk4 mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-gobject mingw-w64-ucrt-x86_64-python-cairo git
+```
+clone and cd into the project, then run it
 
 ```bash
 git clone https://github.com/iylvenyo/NOXIA.git
 cd NOXIA
+python main.py
 ```
 
-Install python if you don't have it then install the requirements
-
-windows / powershell:
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-py -m pip install -r requirements.txt
-py main.py
-```
-
-mac or linux:
+mac / linux:
 
 ```bash
 python3 -m venv .venv
@@ -29,8 +44,6 @@ python3 main.py
 ```
 
 if `python3` does not work, try `python` instead.
-
-if `py` does not work on windows, install python from https://www.python.org/downloads/ and make sure “Add Python to PATH” is checked.
 
 to upload changes:
 

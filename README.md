@@ -36,6 +36,9 @@ python main.py
 
 mac / linux:
 
+>[!NOTE]
+> if pip install for the dependencies fail it's because you need to install some extra dependencies needed for pycairo or PyGObject to work.
+> Inspect the error message to install what's needed from your package manager. 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate

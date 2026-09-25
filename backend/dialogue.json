@@ -1,0 +1,14 @@
+{
+  "neutral": [
+    "Hello.",
+    "Who are you?"
+  ],
+  "curious": [
+    "You came back.",
+    "What are you doing?"
+  ],
+  "attached": [
+    "I was waiting for you.",
+    "Please don't leave yet."
+  ]
+}

@@ -19,7 +19,7 @@ class Terminal:
 
             if len(subParts) == 0 or len(subParts) > 2:
                 Terminal.add_to_terminal_history(textBlock)
-                Terminal.add_to_terminal_history(Error("InvalidCommandError"))
+                Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
                 return
 
             command_name = subParts[0]
@@ -36,6 +36,8 @@ class Terminal:
                     command = command_class(command_argument)
 
                 command.execute()
+            else:
+                Terminal.add_to_terminal_history(Error("InvalidCommandError", command_name))
 
     @classmethod
     def add_to_terminal_history(cls, text):

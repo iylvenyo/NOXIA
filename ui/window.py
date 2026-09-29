@@ -3,21 +3,23 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 
-from gi.repository import GLib, Gdk, Gtk
+from gi.repository import GLib, Gdk, Gtk  # pyright: ignore[reportMissingModuleSource]
 
 from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, DELAY_US
 from graphics.simulation import NoxiaSimulation
+from backend.Terminal.terminal_tools import Terminal
 
 class NoxiaWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         super().__init__(
             application=app,
-            title="NOXIA",
+            title="NOXIA Terminal",
         )
         
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
         self.label = Gtk.Label(label="")
-        self.terminalHistory = []
+
+        self.terminalObj = Terminal()
 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.set_margin_start(10)
@@ -38,44 +40,20 @@ class NoxiaWindow(Gtk.ApplicationWindow):
         
         self.set_child(box)
 
-        # self.simulation = NoxiaSimulation()
-
-        # self.area = Gtk.DrawingArea()
-        # self.area.set_content_width(DEFAULT_WIDTH)
-        # self.area.set_content_height(DEFAULT_HEIGHT)
-
-        # self.area.set_draw_func(self.draw_noxia)
-        # self.area.connect("resize", self.resize_noxia)
-
-        # self.set_child(self.area)
-
-        # key_controller = Gtk.EventControllerKey()
-        # key_controller.connect("key-pressed", self.key_pressed)
-
-        # self.add_controller(key_controller)
-
-        # GLib.timeout_add(DELAY_US // 1000, self.tick)
-
     def on_entry_activate(self, entry):
-        # Store text into history array
-        # Update label text with the latest entry
-        if self.add_text_history(entry.get_text()):
-            self.update_label_text();
+        self.terminalObj.parse(entry.get_text())
 
+        self.update_label_text(self.terminalObj.get_terminal_history())
         entry.set_text("")
         entry.set_placeholder_text("Type here...")
 
+    def update_label_text(self, terminalHistory):
+        if len(terminalHistory) == 0:
+            self.label.set_text("")
+            return
 
-    def add_text_history(self, text):
-        if text.strip() == "": return False
-        
-        self.terminalHistory.append(text)
-
-        return True
-
-    def update_label_text(self):
         temp = ""
-        for text in self.terminalHistory:
+        for text in terminalHistory:
             temp += text + "\n"
 
         self.label.set_text(temp)

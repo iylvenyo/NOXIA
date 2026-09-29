@@ -1,11 +1,12 @@
 import csv
+import inspect
 from backend.Terminal.commands import *
 
 class Terminal:
-    def __init__(self):
-        self.terminalHistory = []
+    terminalHistory = []
 
-    def parse(self, textBlock):
+    @staticmethod
+    def parse(textBlock):
 
         if textBlock.strip() == "":
             return
@@ -13,50 +14,48 @@ class Terminal:
         stringParts = csv.reader([textBlock], delimiter=';', quotechar='"', skipinitialspace=True)
 
         for parts in stringParts:
-            subParts = parts[0].split(" ")
+            reader = csv.reader([parts[0]], delimiter=' ', quotechar='"')
+            subParts = next(reader)
 
             if len(subParts) == 0 or len(subParts) > 2:
-                continue
+                Terminal.add_to_terminal_history(textBlock)
+                Terminal.add_to_terminal_history(Error("InvalidCommandError"))
+                return
 
-            commandName = subParts[0]
-            argument = subParts[1] if len(subParts) == 2 else None
+            command_name = subParts[0]
+            command_argument = subParts[1] if len(subParts) == 2 else None
 
-            if TerminalCommands.contains(commandName):
+            Terminal.add_to_terminal_history(textBlock)
 
-                command_class = TerminalCommands.commandsDictionary[commandName]
+            if TerminalCommands.contains(command_name):
+                command_class = TerminalCommands.commandsDictionary[command_name]
 
-                if commandName == "clear":
-                    command = command_class(self)
-                else:
-                    command = command_class(argument)
+                if len(inspect.signature(command_class).parameters) == 0:
+                    command = command_class()
+                else: 
+                    command = command_class(command_argument)
 
                 command.execute()
-                
-            if commandName == "clear": return
 
-        self.add_to_terminal_history(textBlock)
+    @classmethod
+    def add_to_terminal_history(cls, text):
+        cls.terminalHistory.append(text)
 
-    
+    @staticmethod
+    def get_terminal_history():
+        return Terminal.terminalHistory
 
-    def add_to_terminal_history(self, text):
-        self.terminalHistory.append(text)
-
-    def get_terminal_history(self):
-        return self.terminalHistory
+    @staticmethod
+    def clear_terminal_history():
+        Terminal.terminalHistory = []
 
 class TerminalCommands:
     commandsDictionary = {
         "clear": Clear,
+        "funny": Funny
     }
 
     @staticmethod
     def contains(command_name):
         return command_name in TerminalCommands.commandsDictionary
-
-    # def execute_command(self, command_name):
-    #     command = self.commands.get(command_name)
-    #     if command:
-    #         command.execute()
-    #     else:
-    #         self.terminalObj.label.set_text(f"Command '{command_name}' not found.")
 

@@ -19,8 +19,6 @@ class NoxiaWindow(Gtk.ApplicationWindow):
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
         self.label = Gtk.Label(label="")
 
-        self.terminalObj = Terminal()
-
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.set_margin_start(10)
         box.set_margin_end(10)
@@ -41,9 +39,9 @@ class NoxiaWindow(Gtk.ApplicationWindow):
         self.set_child(box)
 
     def on_entry_activate(self, entry):
-        self.terminalObj.parse(entry.get_text())
+        Terminal.parse(entry.get_text())
 
-        self.update_label_text(self.terminalObj.get_terminal_history())
+        self.update_label_text(Terminal.get_terminal_history())
         entry.set_text("")
         entry.set_placeholder_text("Type here...")
 

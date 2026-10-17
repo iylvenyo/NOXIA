@@ -1,0 +1,27 @@
+.play_button
+{
+    background-image: none;
+    background-color: blueviolet;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.pause_button
+{
+    background-image: none;
+    background-color: red;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.button_grid
+{
+    background-image: none;
+    background-color: grey;
+}
+
+.music_window
+{
+    background-image: none;
+    background-color: black;
+}

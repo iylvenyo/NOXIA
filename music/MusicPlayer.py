@@ -1,7 +1,7 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
-from gi.repository import Gtk, Gsk, GObject, Gio
+from gi.repository import Gtk, Gsk, GObject, Gdk
 
 # Get path for songs
 from pathlib import Path
@@ -9,11 +9,28 @@ song_path1 = Path(__file__).resolve().parent / "songs" / "test1.wav"
 song_path2 = Path(__file__).resolve().parent / "songs" / "test2.wav"
 song_path3 = Path(__file__).resolve().parent / "songs" / "presentation_demo.mp3"
 
+# Import CSS Stylesheet
+style_path = Path(__file__).resolve().parent.parent / "ui" / "music_player_style.css"
+
 
 class MusicPlayer(Gtk.ApplicationWindow):
 
     def __init__(self, app):
             super().__init__(application = app, title = "NOXIA Music Player")
+
+            # Set size
+            self.set_default_size(300, 300)
+
+            # Add CSS provider
+            self.style = Gtk.CssProvider()
+            self.style.load_from_path(str(style_path))
+            Gtk.StyleContext.add_provider_for_display(
+                Gdk.Display.get_default(), self.style,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+
+            # Add CSS class for this window.
+            self.add_css_class("music_window")
 
             # Create media stream for song 1
             self.song1 = Gtk.MediaFile.new_for_filename(str(song_path1))
@@ -34,10 +51,12 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.current_song = self.song1
 
             # Play button
-            self.play_btn = PlayButton(self, self.song_menu, self.song_array)
+            self.play_btn = PlayButton(self)
+            self.play_btn.add_css_class("play_button")
             
             # Pause Button
-            self.pause_btn = PauseButton(self, self.song_menu, self.song_array)
+            self.pause_btn = PauseButton(self)
+            self.pause_btn.add_css_class("pause_button")
 
             # Text box
             self.text_box = Gtk.Entry()
@@ -48,20 +67,15 @@ class MusicPlayer(Gtk.ApplicationWindow):
 
             # Make grid
             self.button_grid = Gtk.Grid()
-            self.button_grid.attach(self.play_btn, 1, 1, 1, 1)
-            self.button_grid.attach(self.pause_btn, 1, 2, 1, 1)
-            self.button_grid.attach(self.text_box, 1, 3, 1, 1)
-            self.set_child(self.button_grid)
 
-    # Music player properties
-    song1 = None
-    song2 = None
-    song3 = None
-    play_btn = None
-    pause_btn = None
-    song_array = None
-    song_menu = None
-    button_grid = None
+            # Add buttons and text box to grid
+            self.button_grid.attach(self.play_btn, 1, 1, 1, 1)
+            self.button_grid.attach(self.pause_btn, 2, 1, 1, 1)
+            self.button_grid.attach(self.text_box, 1, 2, 1, 1)
+
+            # Add grid to window and add css to grid
+            self.set_child(self.button_grid)
+            self.button_grid.add_css_class("button_grid")
 
     def on_text_input(self, text_box):
         input = self.text_buffer.get_text()
@@ -76,11 +90,9 @@ class MusicPlayer(Gtk.ApplicationWindow):
 class PlayButton(Gtk.Button):
 
     # Get music window attributes
-    def __init__(self, parent_window, menu, song_array):
+    def __init__(self, parent_window):
         super().__init__(label="play")
         self.parent_window = parent_window
-        self.menu = menu
-        self.song_array = song_array
         self.song = self.parent_window.current_song
 
     # Play audio file
@@ -98,11 +110,9 @@ class PlayButton(Gtk.Button):
 class PauseButton(Gtk.Button):
 
     # Get music window attributes
-    def __init__(self, parent_window, menu, song_array):
+    def __init__(self, parent_window):
         super().__init__(label="pause")
         self.parent_window = parent_window
-        self.menu = menu
-        self.song_array = song_array
         self.song = self.parent_window.current_song
 
     # Pause audio file

@@ -78,10 +78,16 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.button_grid.add_css_class("button_grid")
 
     def on_text_input(self, text_box):
-        input = self.text_buffer.get_text()
+        user_input = self.text_buffer.get_text()
 
-        if (int(input) >= 1 and int(input) <= 3):
-            self.current_song = self.song_array[int(input) - 1]
+        # Handle bad input
+        if not isinstance(user_input, int):
+            self.text_buffer.delete_text(0, self.text_buffer.get_length())
+            return
+
+        # If user input is within range, update current song
+        if (int(user_input) >= 1 and int(user_input) <= 3):
+            self.current_song = self.song_array[int(user_input) - 1]
 
         # clear buffer
         self.text_buffer.delete_text(0, self.text_buffer.get_length())

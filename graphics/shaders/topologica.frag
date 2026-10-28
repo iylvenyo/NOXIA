@@ -72,11 +72,9 @@ void mainImage(out vec4 color, in vec2 fragCoord)
     vec3 camUp = vec3(0.0, 1.0, 0.0);
     vec3 camLookat = vec3(0.0, 0.0, 0.0);
 
-    float mx = iMouse.x / iResolution.x * PI * 2.0 + iTime * 0.01;
-    float my = -iMouse.y / iResolution.y * 10.0
-             + sin(iTime * 0.03) * 0.2
-             + 0.2;
-
+    float mx = iTime * 0.01;
+    float my = sin(iTime * 0.03) * 0.2 + 0.2;
+	
     vec3 camPos = vec3(
         cos(my) * cos(mx),
         sin(my),

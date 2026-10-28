@@ -47,3 +47,24 @@ class Funny(Command):
         
         from backend.Terminal.terminal_tools import Terminal
         Terminal.add_to_terminal_history(f"Do I think your joke is funny? {self.responseList[randomResponseIndex]}")
+
+class ChangeBackground(Command):
+    def __init__(self):
+        super().__init__(None)
+
+    def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+        Terminal.app.graphics_window.cycle_graphic()
+
+class ResetGraphics(Command):
+    def __init__(self, argument=None):
+        super().__init__(argument)
+
+    def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
+        graphics_window = Terminal.app.graphics_window
+        graphics_window.simulation.reset()
+        graphics_window.area.queue_render()
+
+        Terminal.add_to_terminal_history("Anemone reset")

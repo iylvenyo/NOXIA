@@ -3,6 +3,7 @@ import inspect
 from backend.Terminal.commands import *
 
 class Terminal:
+    app = None
     terminalHistory = []
 
     @staticmethod
@@ -54,7 +55,9 @@ class Terminal:
 class TerminalCommands:
     commandsDictionary = {
         "clear": Clear,
-        "funny": Funny
+        "funny": Funny,
+        "change": ChangeBackground,
+        "reset": ResetGraphics,
     }
 
     @staticmethod

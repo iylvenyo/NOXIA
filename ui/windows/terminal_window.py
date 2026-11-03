@@ -22,6 +22,13 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.label.set_valign(Gtk.Align.END)
         self.label.set_halign(Gtk.Align.START)
 
+        self.scrollWindow = Gtk.ScrolledWindow()
+        self.scrollWindow.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.scrollWindow.set_max_content_height(DEFAULT_HEIGHT - 50)
+        self.scrollWindow.set_vexpand(True)
+        self.scrollWindow.set_child(self.label)
+
+
         box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=6,
@@ -35,7 +42,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         entry.set_placeholder_text("Type here...")
         entry.connect("activate", self.on_entry_activate)
 
-        box.append(self.label)
+        box.append(self.scrollWindow)
         box.append(entry)
         self.set_child(box)
 
@@ -48,3 +55,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
     def update_label_text(self, terminal_history):
         self.label.set_text("\n".join(terminal_history))
+        self.scroll_to_bottom(self.scrollWindow.get_vadjustment())
+
+    def scroll_to_bottom(self, adjustment):
+        adjustment.set_value(adjustment.get_upper() - adjustment.get_page_size())

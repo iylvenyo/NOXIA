@@ -90,7 +90,6 @@ class MusicPlayer(Gtk.ApplicationWindow):
             return None
 
 class PlayButton(Gtk.Button):
-
     # Get music window attributes
     def __init__(self, parent_window):
         super().__init__(label="play")
@@ -99,6 +98,9 @@ class PlayButton(Gtk.Button):
 
     # Play audio file
     def do_clicked(self):
+
+        self.parent_window.on_text_input(self.parent_window.text_box)
+
         print("play button clicked")
 
         # Update current song

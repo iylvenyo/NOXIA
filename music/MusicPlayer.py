@@ -1,7 +1,8 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
-from gi.repository import Gtk, Gsk, GObject, Gdk
+
+from gi.repository import Gtk, Gsk, GObject, Gdk # type: ignore
 
 songsDictionary = {
     "1": "test1.wav",

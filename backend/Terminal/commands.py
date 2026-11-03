@@ -3,6 +3,7 @@
 import random
 
 from backend.Terminal.errors import Error
+from backend.Terminal.terminal_tools import Terminal
 
 class Command:
     def __init__(self, argument):
@@ -15,7 +16,6 @@ class Command:
 class Clear(Command):
     def __init__(self):
 
-        from backend.Terminal.terminal_tools import Terminal
         super().__init__(Terminal)
 
     def execute(self):
@@ -45,7 +45,6 @@ class Funny(Command):
 
         randomResponseIndex = random.randint(0, len(self.responseList) - 1)
         
-        from backend.Terminal.terminal_tools import Terminal
         Terminal.add_to_terminal_history(f"Do I think your joke is funny? {self.responseList[randomResponseIndex]}")
 
 class ChangeBackground(Command):
@@ -53,7 +52,9 @@ class ChangeBackground(Command):
         super().__init__(None)
 
     def execute(self):
-        from backend.Terminal.terminal_tools import Terminal
+        if Terminal.app is None or Terminal.app.graphics_window is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
+        
         Terminal.app.graphics_window.cycle_graphic()
 
 class ResetGraphics(Command):
@@ -61,8 +62,9 @@ class ResetGraphics(Command):
         super().__init__(argument)
 
     def execute(self):
-        from backend.Terminal.terminal_tools import Terminal
-
+        if Terminal.app is None or Terminal.app.graphics_window is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
+        
         graphics_window = Terminal.app.graphics_window
         graphics_window.simulation.reset()
         graphics_window.area.queue_render()

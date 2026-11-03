@@ -3,7 +3,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 
-from gi.repository import GLib, Gdk, Gtk
+from gi.repository import GLib, Gdk, Gtk # type: ignore
 
 from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, DELAY_US
 from graphics.gl_renderer import NoxiaGLRenderer

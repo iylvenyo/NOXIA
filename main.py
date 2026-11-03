@@ -7,7 +7,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
 
-from gi.repository import Gtk, Gsk
+from gi.repository import Gtk, Gsk # type: ignore
 
 # Noxia terminal imports
 from ui.windows.terminal_window import NoxiaTerminalWindow

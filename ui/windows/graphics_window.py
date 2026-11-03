@@ -171,6 +171,8 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
     def start_background_transition(self):
         if self.transition_started is not None:
             return
+        if self.visual_index is None:
+            return
 
         self.transition_target = (self.visual_index + 1) % GRAPHIC_COUNT
         self.transition_started = time.perf_counter()

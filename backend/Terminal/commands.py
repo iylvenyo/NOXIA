@@ -3,7 +3,7 @@
 import random
 
 from backend.Terminal.errors import Error
-from backend.Terminal.terminal_tools import Terminal
+
 
 class Command:
     def __init__(self, argument):
@@ -15,7 +15,7 @@ class Command:
 
 class Clear(Command):
     def __init__(self):
-
+        from backend.Terminal.terminal_tools import Terminal
         super().__init__(Terminal)
 
     def execute(self):
@@ -37,9 +37,12 @@ class Funny(Command):
     ]
 
     def __init__(self, joke):
+        
         super().__init__(joke)
 
     def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
         if self.argument is None:
             raise ValueError(Error("ArgumentNullError", "joke is null or undefined"))
 
@@ -52,6 +55,8 @@ class ChangeBackground(Command):
         super().__init__(None)
 
     def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
         if Terminal.app is None or Terminal.app.graphics_window is None:
             raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
         
@@ -62,6 +67,8 @@ class ResetGraphics(Command):
         super().__init__(argument)
 
     def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+        
         if Terminal.app is None or Terminal.app.graphics_window is None:
             raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
         
@@ -70,3 +77,15 @@ class ResetGraphics(Command):
         graphics_window.area.queue_render()
 
         Terminal.add_to_terminal_history("Anemone reset")
+
+class Quit(Command):
+    def __init__(self):
+        super().__init__(None)
+
+    def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
+        if Terminal.app is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app is null or undefined"))
+        
+        Terminal.app.quit()

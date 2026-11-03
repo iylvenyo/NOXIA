@@ -58,6 +58,7 @@ class TerminalCommands:
         "funny": Funny,
         "change": ChangeBackground,
         "reset": ResetGraphics,
+        "quit": Quit,
     }
 
     @staticmethod

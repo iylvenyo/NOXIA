@@ -5,8 +5,8 @@ from gi.repository import Gtk, Gsk, GObject, Gdk
 
 # Get path for songs
 from pathlib import Path
-song_path1 = Path(__file__).resolve().parent / "songs" / "test1.wav"
-song_path2 = Path(__file__).resolve().parent / "songs" / "test2.wav"
+song_path1 = Path(__file__).resolve().parent / "songs" / "adventure.mp3"
+song_path2 = Path(__file__).resolve().parent / "songs" / "strange.mp3"
 song_path3 = Path(__file__).resolve().parent / "songs" / "presentation_demo.mp3"
 
 # Import CSS Stylesheet
@@ -80,10 +80,15 @@ class MusicPlayer(Gtk.ApplicationWindow):
     def on_text_input(self, text_box):
         user_input = self.text_buffer.get_text()
 
-        # Handle bad input
-        if not isinstance(user_input, int):
+        # Check for valid input
+        try:
+            int(user_input)
+        except ValueError:
             self.text_buffer.delete_text(0, self.text_buffer.get_length())
             return
+
+        # Convert user input to int
+        user_input = int(user_input)
 
         # If user input is within range, update current song
         if (int(user_input) >= 1 and int(user_input) <= 3):

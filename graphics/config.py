@@ -16,3 +16,6 @@ TURN_DELTA = 25.0 / 100_000.0
 COLORS = 20
 
 DEFAULT_SEED = 1
+
+from pathlib import Path
+ROOT_PATH = Path(__file__).resolve().parent.parent

@@ -1,17 +1,22 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
-from gi.repository import Gtk, Gsk, Gdk
 
+from gi.repository import Gtk, Gsk, GObject, Gdk # type: ignore
+
+songsDictionary = {
+    "1": "sprites.wav",
+    "2": "adventure.wav",
+    "3": "presentation_demo.wav",
+    "4": "lost.wav",
+    "5": "strange.wav"
+}
+from graphics.config import ROOT_PATH
 # Get path for songs
-from pathlib import Path
-song_path1 = Path(__file__).resolve().parent / "songs" / "presentation_demo.mp3"
-song_path2 = Path(__file__).resolve().parent / "songs" / "strange.mp3"
-song_path3 = Path(__file__).resolve().parent / "songs" / "adventure.mp3"
+defaultPath = ROOT_PATH / "music" / "songs"
 
 # Import CSS Stylesheet
-style_path = Path(__file__).resolve().parent.parent / "ui" / "music_player_style.css"
-
+style_path = ROOT_PATH / "ui" / "css" / "music_player_style.css"
 
 class MusicPlayer(Gtk.ApplicationWindow):
 
@@ -24,31 +29,18 @@ class MusicPlayer(Gtk.ApplicationWindow):
             # Add CSS provider
             self.style = Gtk.CssProvider()
             self.style.load_from_path(str(style_path))
+
             Gtk.StyleContext.add_provider_for_display(
-                Gdk.Display.get_default(), self.style,
+                self.get_display(), self.style,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
 
             # Add CSS class for this window.
             self.add_css_class("music_window")
 
-            # Create media stream for song 1
-            self.song1 = Gtk.MediaFile.new_for_filename(str(song_path1))
-            self.song1.set_volume(1)
-
-            # Create media stream for song 2
-            self.song2 = Gtk.MediaFile.new_for_filename(str(song_path2))
-            self.song2.set_volume(1)
-
-            # Create media stream for song 3
-            self.song3 = Gtk.MediaFile.new_for_filename(str(song_path3))
-            self.song3.set_volume(1)
-
-            # Make array of songs
-            self.song_array = [self.song1, self.song2, self.song3]
-
-            # Set current song
-            self.current_song = self.song1
+            # Set an inital song
+            song_path = self.get_song_path("1")
+            self.current_song = Gtk.MediaFile.new_for_filename(str(song_path))
 
             # Play button
             self.play_btn = PlayButton(self)
@@ -62,7 +54,7 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.text_box = Gtk.Entry()
             self.text_buffer = Gtk.EntryBuffer()
             self.text_box.set_buffer(self.text_buffer)
-            self.text_box.set_placeholder_text("song number (1-3)")
+            self.text_box.set_placeholder_text("song number (1-5)")
             self.text_box.connect("activate", self.on_text_input)
 
             # Make grid
@@ -78,51 +70,47 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.button_grid.add_css_class("button_grid")
 
     def on_text_input(self, text_box):
-        user_input = self.text_buffer.get_text()
+        input = self.text_buffer.get_text()
 
-        # Check for valid input
-        try:
-            int(user_input)
-        except ValueError:
+        if input not in songsDictionary:
+            # clear buffer
             self.text_buffer.delete_text(0, self.text_buffer.get_length())
             return
 
-        # Convert user input to int
-        user_input = int(user_input)
+        if self.current_song is not None:
+            self.current_song.pause()
+            self.current_song = None
 
-        # If user input is within range, update current song
-        if (int(user_input) >= 1 and int(user_input) <= 3):
-            self.current_song = self.song_array[int(user_input) - 1]
-
-            # Start song from beginning
-            self.current_song.seek(0)
+        if input in songsDictionary:
+            # Get song path and create Gtk.MediaFile object
+            song_path = self.get_song_path(input)
+            self.current_song = Gtk.MediaFile.new_for_filename(str(song_path))
+            self.current_song.set_volume(1)
 
         # clear buffer
         self.text_buffer.delete_text(0, self.text_buffer.get_length())
 
+    def get_song_path(self, song_key):
+        if song_key in songsDictionary:
+            print(defaultPath / songsDictionary[song_key])
+            return defaultPath / songsDictionary[song_key]
+        else:
+            return None
 
 class PlayButton(Gtk.Button):
-
     # Get music window attributes
     def __init__(self, parent_window):
         super().__init__(label="play")
         self.parent_window = parent_window
-        self.song = self.parent_window.current_song
 
     # Play audio file
     def do_clicked(self):
-
-        # Update current song
-        self.song = self.parent_window.current_song
-
-        # Make sure song loops
-        self.song.set_loop(True)
 
         # Restart song if it has ended.
         if self.song.get_ended():
             self.song.seek(0)
 
-        self.song.play()
+        self.parent_window.current_song.play()
 
 class PauseButton(Gtk.Button):
 
@@ -130,10 +118,9 @@ class PauseButton(Gtk.Button):
     def __init__(self, parent_window):
         super().__init__(label="pause")
         self.parent_window = parent_window
-        self.song = self.parent_window.current_song
 
     # Pause audio file
     def do_clicked(self):
-        self.song = self.parent_window.current_song
-        self.song.pause()
 
+        if self.parent_window.current_song is None: return
+        self.parent_window.current_song.pause()

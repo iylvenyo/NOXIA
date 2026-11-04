@@ -1,0 +1,9 @@
+.command_line,
+.command_line:focus,
+.command_line text,
+.command_line text:focus {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

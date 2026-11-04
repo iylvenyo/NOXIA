@@ -3,7 +3,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 
-from gi.repository import GLib, Gdk, Gtk
+from gi.repository import GLib, Gdk, Gtk # type: ignore
 
 from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, DELAY_US
 from graphics.gl_renderer import NoxiaGLRenderer
@@ -170,6 +170,8 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
 
     def start_background_transition(self):
         if self.transition_started is not None:
+            return
+        if self.visual_index is None:
             return
 
         self.transition_target = (self.visual_index + 1) % GRAPHIC_COUNT

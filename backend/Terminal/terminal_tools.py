@@ -12,6 +12,8 @@ class Terminal:
         if textBlock.strip() == "":
             return
 
+        Terminal.add_to_terminal_history(">  " + textBlock)
+
         stringParts = csv.reader([textBlock], delimiter=';', quotechar='"', skipinitialspace=True)
 
         for parts in stringParts:
@@ -19,14 +21,12 @@ class Terminal:
             subParts = next(reader)
 
             if len(subParts) == 0 or len(subParts) > 2:
-                Terminal.add_to_terminal_history(textBlock)
                 Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
+                Terminal.add_to_terminal_history("\n")
                 return
 
             command_name = subParts[0]
             command_argument = subParts[1] if len(subParts) == 2 else None
-
-            Terminal.add_to_terminal_history(textBlock)
 
             if TerminalCommands.contains(command_name):
                 command_class = TerminalCommands.commandsDictionary[command_name]
@@ -37,8 +37,12 @@ class Terminal:
                     command = command_class(command_argument)
 
                 command.execute()
+
+                return
             else:
                 Terminal.add_to_terminal_history(Error("InvalidCommandError", command_name))
+
+        Terminal.add_to_terminal_history("\n")
 
     @classmethod
     def add_to_terminal_history(cls, text):
@@ -58,6 +62,7 @@ class TerminalCommands:
         "funny": Funny,
         "change": ChangeBackground,
         "reset": ResetGraphics,
+        "quit": Quit,
     }
 
     @staticmethod

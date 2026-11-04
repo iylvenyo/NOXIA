@@ -4,6 +4,7 @@ import random
 
 from backend.Terminal.errors import Error
 
+
 class Command:
     def __init__(self, argument):
         self.argument = argument
@@ -14,7 +15,6 @@ class Command:
 
 class Clear(Command):
     def __init__(self):
-
         from backend.Terminal.terminal_tools import Terminal
         super().__init__(Terminal)
 
@@ -37,15 +37,17 @@ class Funny(Command):
     ]
 
     def __init__(self, joke):
+        
         super().__init__(joke)
 
     def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
         if self.argument is None:
             raise ValueError(Error("ArgumentNullError", "joke is null or undefined"))
 
         randomResponseIndex = random.randint(0, len(self.responseList) - 1)
         
-        from backend.Terminal.terminal_tools import Terminal
         Terminal.add_to_terminal_history(f"Do I think your joke is funny? {self.responseList[randomResponseIndex]}")
 
 class ChangeBackground(Command):
@@ -54,6 +56,10 @@ class ChangeBackground(Command):
 
     def execute(self):
         from backend.Terminal.terminal_tools import Terminal
+
+        if Terminal.app is None or Terminal.app.graphics_window is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
+        
         Terminal.app.graphics_window.cycle_graphic()
 
 class ResetGraphics(Command):
@@ -62,9 +68,24 @@ class ResetGraphics(Command):
 
     def execute(self):
         from backend.Terminal.terminal_tools import Terminal
-
+        
+        if Terminal.app is None or Terminal.app.graphics_window is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app or Terminal.app.graphics_window is null or undefined"))
+        
         graphics_window = Terminal.app.graphics_window
         graphics_window.simulation.reset()
         graphics_window.area.queue_render()
 
         Terminal.add_to_terminal_history("Anemone reset")
+
+class Quit(Command):
+    def __init__(self):
+        super().__init__(None)
+
+    def execute(self):
+        from backend.Terminal.terminal_tools import Terminal
+
+        if Terminal.app is None:
+            raise ValueError(Error("ApplicationNullError", "Terminal.app is null or undefined"))
+        
+        Terminal.app.quit()

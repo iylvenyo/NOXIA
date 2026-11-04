@@ -1,20 +1,20 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
-from gi.repository import Gtk, Gsk, GObject, Gdk
+
+from gi.repository import Gtk, Gsk, GObject, Gdk # type: ignore
 
 songsDictionary = {
     "1": "test1.wav",
     "2": "test2.wav",
     "3": "presentation_demo.mp3"
 }
-
+from graphics.config import ROOT_PATH
 # Get path for songs
-from pathlib import Path
-defaultPath = Path(__file__).resolve().parent / "songs"
+defaultPath = ROOT_PATH / "music" / "songs"
 
 # Import CSS Stylesheet
-style_path = Path(__file__).resolve().parent.parent / "ui" / "music_player_style.css"
+style_path = ROOT_PATH / "ui" / "css" / "music_player_style.css"
 
 class MusicPlayer(Gtk.ApplicationWindow):
 
@@ -27,8 +27,9 @@ class MusicPlayer(Gtk.ApplicationWindow):
             # Add CSS provider
             self.style = Gtk.CssProvider()
             self.style.load_from_path(str(style_path))
+
             Gtk.StyleContext.add_provider_for_display(
-                Gdk.Display.get_default(), self.style,
+                self.get_display(), self.style,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
 
@@ -98,15 +99,13 @@ class PlayButton(Gtk.Button):
 
     # Play audio file
     def do_clicked(self):
-
-        self.parent_window.on_text_input(self.parent_window.text_box)
-
         print("play button clicked")
 
         # Update current song
-        if self.parent_window.current_song is None: return
-
-        self.song = self.parent_window.current_song
+        if self.parent_window.current_song is None:
+            self.parent_window.on_text_input(self.parent_window.text_box)
+        else:
+            self.song = self.parent_window.current_song
 
         # Restart song if it has ended.
         if self.song.get_ended():

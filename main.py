@@ -7,11 +7,13 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
 
-from gi.repository import Gtk, Gsk
-from ui.window import NoxiaWindow
+from gi.repository import Gtk, Gsk # type: ignore
+
+# Noxia terminal imports
+from ui.windows.terminal_window import NoxiaTerminalWindow
 
 # Noxia graphics imports
-from ui.graphics_window import NoxiaGraphicsWindow
+from ui.windows.graphics_window import NoxiaGraphicsWindow
 
 # Noxia audio imports
 from music.MusicPlayer import MusicPlayer
@@ -22,20 +24,19 @@ class NoxiaApplication(Gtk.Application):
             application_id="com.github.iylvenyo.noxia",
         )
 
-        self.window = None
+        self.terminal_window = None
         self.graphics_window = None
         self.music_player = None
 
     def do_activate(self):
-        if self.window is None:
-            self.window = NoxiaWindow(self)
-            self.music_player = MusicPlayer(self)
-            self.graphics_window = NoxiaGraphicsWindow(self)
-            self.music_player = MusicPlayer(self)
+        if self.terminal_window is None:
+            self.terminal_window = NoxiaTerminalWindow(self)
+            # self.music_player = MusicPlayer(self)
+            # self.graphics_window = NoxiaGraphicsWindow(self)
 
-        self.window.present()
-        self.graphics_window.present()
-        self.music_player.present()
+        self.terminal_window.present()
+        # self.graphics_window.present()
+        # self.music_player.present()
 
 
 def main():

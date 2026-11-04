@@ -33,7 +33,7 @@ class NoxiaWindow(Gtk.ApplicationWindow):
 
         self.add_controller(key_controller)
 
-        GLib.timeout_add(DELAY_US // 1000, self.tick)
+        GLib.timeout_add(int(DELAY_US // 1000), self.tick)
 
     def tick(self):
         self.simulation.step()

@@ -1,13 +1,13 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gsk", "4.0")
-from gi.repository import Gtk, Gsk, GObject, Gdk
+from gi.repository import Gtk, Gsk, Gdk
 
 # Get path for songs
 from pathlib import Path
-song_path1 = Path(__file__).resolve().parent / "songs" / "adventure.mp3"
+song_path1 = Path(__file__).resolve().parent / "songs" / "presentation_demo.mp3"
 song_path2 = Path(__file__).resolve().parent / "songs" / "strange.mp3"
-song_path3 = Path(__file__).resolve().parent / "songs" / "presentation_demo.mp3"
+song_path3 = Path(__file__).resolve().parent / "songs" / "adventure.mp3"
 
 # Import CSS Stylesheet
 style_path = Path(__file__).resolve().parent.parent / "ui" / "music_player_style.css"
@@ -94,6 +94,9 @@ class MusicPlayer(Gtk.ApplicationWindow):
         if (int(user_input) >= 1 and int(user_input) <= 3):
             self.current_song = self.song_array[int(user_input) - 1]
 
+            # Start song from beginning
+            self.current_song.seek(0)
+
         # clear buffer
         self.text_buffer.delete_text(0, self.text_buffer.get_length())
 
@@ -111,6 +114,9 @@ class PlayButton(Gtk.Button):
 
         # Update current song
         self.song = self.parent_window.current_song
+
+        # Make sure song loops
+        self.song.set_loop(True)
 
         # Restart song if it has ended.
         if self.song.get_ended():

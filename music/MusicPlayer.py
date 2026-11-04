@@ -9,13 +9,12 @@ songsDictionary = {
     "2": "test2.wav",
     "3": "presentation_demo.mp3"
 }
-
+from graphics.config import ROOT_PATH
 # Get path for songs
-from pathlib import Path
-defaultPath = Path(__file__).resolve().parent / "songs"
+defaultPath = ROOT_PATH / "music" / "songs"
 
 # Import CSS Stylesheet
-style_path = Path(__file__).resolve().parent.parent / "ui" / "css" / "music_player_style.css"
+style_path = ROOT_PATH / "ui" / "css" / "music_player_style.css"
 
 class MusicPlayer(Gtk.ApplicationWindow):
 

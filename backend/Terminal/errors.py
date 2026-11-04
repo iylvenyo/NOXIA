@@ -9,4 +9,4 @@ class Error:
     }
 
     def __new__(cls, errorID, message=None):
-        return f"-noxia <{errorID}> {cls.errorsDictionary.get(errorID)}: {message}"
+        return f"<{errorID}> {cls.errorsDictionary.get(errorID)}: {message}"

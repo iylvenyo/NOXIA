@@ -19,3 +19,7 @@ DEFAULT_SEED = 1
 
 from pathlib import Path
 ROOT_PATH = Path(__file__).resolve().parent.parent
+
+# Terminal
+BASE_LINE = "$"
+RESPONSE_LINE = ">>>"

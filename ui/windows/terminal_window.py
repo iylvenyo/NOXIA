@@ -3,7 +3,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 
 from gi.repository import Gtk # type: ignore
-from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, ROOT_PATH
+from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, ROOT_PATH, BASE_LINE, RESPONSE_LINE
 from backend.Terminal.terminal_tools import Terminal
 
 style_path = ROOT_PATH / "ui" / "css" / "terminal_window.css"
@@ -54,7 +54,8 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.scrollWindow.set_visible(False)  
 
         # Termainl Command Line Prompt and Entry
-        commandLinePrompt = Gtk.Label(label=">")
+
+        self.commandLinePrompt = Gtk.Label(label=BASE_LINE)
 
         commandLine = Gtk.Entry()
         commandLine.set_hexpand(True)
@@ -67,7 +68,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
             orientation=Gtk.Orientation.HORIZONTAL,
             spacing=6,
         )
-        commandLineBox.append(commandLinePrompt)
+        commandLineBox.append(self.commandLinePrompt)
         commandLineBox.append(commandLine)
         
         # Append Termianl History and Command Line to Terminal Box
@@ -99,6 +100,8 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.termainlHistory.set_text("\n".join(terminal_history))
         self.scroll_to_bottom(self.scrollWindow.get_vadjustment())
         
-
     def scroll_to_bottom(self, adjustment):
         adjustment.set_value(adjustment.get_upper() - adjustment.get_page_size())
+
+    def set_command_line_prompt(self, prompt):
+        self.commandLinePrompt.set_label(prompt)

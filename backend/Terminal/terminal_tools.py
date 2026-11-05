@@ -1,10 +1,12 @@
 import csv
 import inspect
 from backend.Terminal.commands import *
+from graphics.config import BASE_LINE, RESPONSE_LINE
 
 class Terminal:
     app = None
     terminalHistory = []
+    commanded = False
 
     @staticmethod
     def parse(textBlock):
@@ -12,7 +14,10 @@ class Terminal:
         if textBlock.strip() == "":
             return
 
-        Terminal.add_to_terminal_history(">  " + textBlock)
+        if Terminal.commanded:
+            Terminal.add_to_terminal_history(RESPONSE_LINE + "  " + textBlock)
+        else:
+            Terminal.add_to_terminal_history(BASE_LINE + "  " + textBlock)
 
         stringParts = csv.reader([textBlock], delimiter=';', quotechar='"', skipinitialspace=True)
 
@@ -22,18 +27,29 @@ class Terminal:
 
             if len(subParts) == 0 or len(subParts) > 2:
                 Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
+                Terminal.add_to_terminal_history("\n")
                 return
 
             command_name = subParts[0]
             command_argument = subParts[1] if len(subParts) == 2 else None
 
-            if TerminalCommands.contains(command_name):
+            if Terminal.commanded:
+                MultiResponseHandler(command_name)
+                Terminal.add_to_terminal_history("\n")
+                return
+
+            if TerminalCommands.containsCommand(command_name):
+
                 command_class = TerminalCommands.commandsDictionary[command_name]
 
                 if len(inspect.signature(command_class).parameters) == 0:
                     command = command_class()
                 else: 
                     command = command_class(command_argument)
+
+                if TerminalCommands.containsSubcontroller(command_name):
+                    Terminal.commanded = True
+                    Terminal.set_command_line_prompt(RESPONSE_LINE)
 
                 command.execute()
                 Terminal.add_to_terminal_history("\n")
@@ -55,6 +71,17 @@ class Terminal:
     def clear_terminal_history():
         Terminal.terminalHistory = []
 
+    @staticmethod
+    def return_command():
+        Terminal.commanded = False
+        Terminal.set_command_line_prompt(BASE_LINE)
+
+    @staticmethod
+    def set_command_line_prompt(prompt):
+        if Terminal.app is None or Terminal.app.terminal_window is None:
+            return
+        Terminal.app.terminal_window.set_command_line_prompt(prompt)
+
 class TerminalCommands:
     commandsDictionary = {
         "clear": Clear,
@@ -62,9 +89,17 @@ class TerminalCommands:
         "change": ChangeBackground,
         "reset": ResetGraphics,
         "quit": Quit,
+        "chat": Chat
     }
 
+    subControllers = [
+        "chat"
+    ]
+
     @staticmethod
-    def contains(command_name):
+    def containsCommand(command_name):
         return command_name in TerminalCommands.commandsDictionary
 
+    @staticmethod
+    def containsSubcontroller(sub_controller_name):
+        return sub_controller_name in TerminalCommands.subControllers

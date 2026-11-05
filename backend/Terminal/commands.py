@@ -12,7 +12,6 @@ class Command:
     def execute(self):
         raise NotImplementedError("Subclasses must implement the execute method.")
 
-
 class Clear(Command):
     def __init__(self):
         from backend.Terminal.terminal_tools import Terminal
@@ -21,7 +20,7 @@ class Clear(Command):
     def execute(self):
         if self.argument is None:
             raise ValueError(Error("ArgumentNullError", "terminalHistory is null or undefined"))
-
+            
         self.argument.clear_terminal_history()
 
 class Funny(Command):
@@ -44,13 +43,14 @@ class Funny(Command):
         from backend.Terminal.terminal_tools import Terminal
 
         if self.argument is None:
-            print(12012)
             Terminal.add_to_terminal_history(Error("ArgumentNullError", "joke is null or undefined"))
+            Terminal.add_to_terminal_history("\n")
             return
 
         randomResponseIndex = random.randint(0, len(self.responseList) - 1)
         
         Terminal.add_to_terminal_history(f"Do I think your joke is funny? {self.responseList[randomResponseIndex]}")
+        Terminal.add_to_terminal_history("\n")
 
 class ChangeBackground(Command):
     def __init__(self):
@@ -79,6 +79,7 @@ class ResetGraphics(Command):
         graphics_window.area.queue_render()
 
         Terminal.add_to_terminal_history("Anemone reset")
+        Terminal.add_to_terminal_history("\n")
 
 class Quit(Command):
     def __init__(self):
@@ -91,3 +92,15 @@ class Quit(Command):
             raise ValueError(Error("ApplicationNullError", "Terminal.app is null or undefined"))
         
         Terminal.app.quit()
+
+class Chat(Command):
+    def __init__(self):
+        super().__init__(None)
+
+    def execute(self):
+        return
+        #super().__init__(None)
+
+class MultiResponseHandler():
+    def __init__(self, input):
+        self.input = input

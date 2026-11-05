@@ -44,7 +44,9 @@ class Funny(Command):
         from backend.Terminal.terminal_tools import Terminal
 
         if self.argument is None:
-            raise ValueError(Error("ArgumentNullError", "joke is null or undefined"))
+            print(12012)
+            Terminal.add_to_terminal_history(Error("ArgumentNullError", "joke is null or undefined"))
+            return
 
         randomResponseIndex = random.randint(0, len(self.responseList) - 1)
         

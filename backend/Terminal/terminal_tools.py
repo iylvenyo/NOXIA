@@ -34,6 +34,13 @@ class Terminal:
             command_argument = subParts[1] if len(subParts) == 2 else None
 
             if Terminal.commanded:
+
+                if TerminalCommands.containsSubcontrollerReturn(command_name):
+                    Terminal.return_command()
+                    
+                    Terminal.add_to_terminal_history("\n")
+                    return
+
                 MultiResponseHandler(command_name)
                 Terminal.add_to_terminal_history("\n")
                 return
@@ -95,6 +102,9 @@ class TerminalCommands:
     subControllers = [
         "chat"
     ]
+    subControllersReturn = [
+        "exit"
+    ]
 
     @staticmethod
     def containsCommand(command_name):
@@ -103,3 +113,6 @@ class TerminalCommands:
     @staticmethod
     def containsSubcontroller(sub_controller_name):
         return sub_controller_name in TerminalCommands.subControllers
+    @staticmethod
+    def containsSubcontrollerReturn(sub_controller_return_name):
+        return sub_controller_return_name in TerminalCommands.subControllersReturn

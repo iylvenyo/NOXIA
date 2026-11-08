@@ -8,14 +8,14 @@ from pathlib import Path
 
 class ContentManager:
     def __init__(self):
-        project_folder = Path(__file__).resolve().parent.parent
-        self.dialogue_file = project_folder / "data" / "dialogue.json"
+        from graphics.config import ROOT_PATH
+        self.dialogue_file = ROOT_PATH / "backend" / "dialogue.json"
 
         self.dialogue = self.load_dialogue()
 
     def load_dialogue(self):
         try:
-            with open(self.dialogue_file, "r", encoding="utf-8") as file:
+            with open(self.dialogue_file, "r") as file:
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             return {
@@ -49,6 +49,9 @@ class ContentManager:
             and "special_visuals" not in companion.unlocked_content
         ):
             companion.unlocked_content.append("special_visuals")
+
+    def get_dialogue_json(self):
+        return self.dialogue
 
     def get_dialogue(self, companion):
         # check for dialogue based on current mood

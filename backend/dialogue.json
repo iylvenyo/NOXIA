@@ -1,4 +1,45 @@
 {
+  "FirstChat":{
+    "Response":"How are you",
+    "1":{
+          "originalResponse":"Good",
+          "next":"GoodID"
+        },
+    "2":{
+          "originalResponse":"Bad",
+          "next":"NextChatID"
+        },
+    "3":{
+          "originalResponse":"Meh",
+          "next":"NextChatID"
+        },
+    "4":{
+          "originalResponse":"Amazing",
+          "next":"NextChatID"
+        }
+  },
+
+  "GoodID":{
+    "Response":"Hell Yeah",
+    "1":{
+          "originalResponse":"You?",
+          "next":"YouID"
+        },
+    "2":{
+          "originalResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "YouID":{
+    "Response":"Im totally fine",
+    "1":{
+          "originalResponse":"Bye",
+          "next":null
+        }
+  },
+
+
   "neutral": [
     "Hello.",
     "Who are you?"

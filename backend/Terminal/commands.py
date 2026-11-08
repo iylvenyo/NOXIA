@@ -4,7 +4,6 @@ import random
 
 from backend.Terminal.errors import Error
 
-
 class Command:
     def __init__(self, argument):
         self.argument = argument
@@ -96,11 +95,52 @@ class Quit(Command):
 class Chat(Command):
     def __init__(self):
         super().__init__(None)
+        self.inital_json_key = "FirstChat"
+        self.response_object = MultiResponseHandler()
+        self.old_key = self.inital_json_key
 
     def execute(self):
-        return
-        #super().__init__(None)
+        self.response_object.print_at_key(self.inital_json_key)
+
+    def inject_input(self, input_param):
+        from backend.Terminal.terminal_tools import Terminal
+
+        self.input = input_param
+
+        if self.response_object.dialogue[self.old_key][str(self.input)]["next"] not in self.response_object.dialogue:
+            return
+
+        next_key = self.response_object.dialogue[self.old_key][str(self.input)]["next"]
+
+        if next_key is None: 
+            Terminal.return_command()
+            return
+        
+        self.old_key = next_key
+
+        self.response_object.print_at_key(next_key)
 
 class MultiResponseHandler():
-    def __init__(self, input):
+    def __init__(self):
+        
+        from backend.content_manager import ContentManager
+
         self.input = input
+
+        content_manager = ContentManager()
+
+        self.dialogue = content_manager.dialogue
+
+    def print_at_key(self, key):
+        from backend.Terminal.terminal_tools import Terminal
+
+        if self.dialogue is None: return
+
+        Terminal.add_to_terminal_history(self.dialogue[key]["Response"])
+        Terminal.add_to_terminal_history("\n")
+
+        temp_dict = self.dialogue[key]
+
+        for i in range(1, 5):
+            if str(i) in temp_dict:
+                Terminal.add_to_terminal_history(self.dialogue[key][str(i)]["originalResponse"])

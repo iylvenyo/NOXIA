@@ -7,6 +7,7 @@ class Terminal:
     app = None
     terminalHistory = []
     commanded = False
+    commanded_command = None
 
     @staticmethod
     def parse(textBlock):
@@ -26,7 +27,8 @@ class Terminal:
             subParts = next(reader)
 
             if len(subParts) == 0 or len(subParts) > 2:
-                Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
+                if not Terminal.commanded:
+                    Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
                 Terminal.add_to_terminal_history("\n")
                 return
 
@@ -34,14 +36,13 @@ class Terminal:
             command_argument = subParts[1] if len(subParts) == 2 else None
 
             if Terminal.commanded:
-
                 if TerminalCommands.containsSubcontrollerReturn(command_name):
                     Terminal.return_command()
-                    
-                    Terminal.add_to_terminal_history("\n")
                     return
+                else:
+                    if Terminal.commanded_command is not None:
+                        Terminal.commanded_command.inject_input(command_name)
 
-                MultiResponseHandler(command_name)
                 Terminal.add_to_terminal_history("\n")
                 return
 
@@ -56,6 +57,7 @@ class Terminal:
 
                 if TerminalCommands.containsSubcontroller(command_name):
                     Terminal.commanded = True
+                    Terminal.commanded_command = command
                     Terminal.set_command_line_prompt(RESPONSE_LINE)
 
                 command.execute()
@@ -65,6 +67,10 @@ class Terminal:
                 Terminal.add_to_terminal_history(Error("InvalidCommandError", command_name))
 
         Terminal.add_to_terminal_history("\n")
+
+    # @staticmethod
+    # def parse_response(input):
+
 
     @classmethod
     def add_to_terminal_history(cls, text):
@@ -81,7 +87,9 @@ class Terminal:
     @staticmethod
     def return_command():
         Terminal.commanded = False
+        Terminal.commanded_command = None
         Terminal.set_command_line_prompt(BASE_LINE)
+        Terminal.add_to_terminal_history("\n")
 
     @staticmethod
     def set_command_line_prompt(prompt):

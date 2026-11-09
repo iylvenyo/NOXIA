@@ -107,15 +107,17 @@ class Chat(Command):
 
         self.input = input_param
 
-        if self.response_object.dialogue[self.old_key][str(self.input)]["next"] not in self.response_object.dialogue:
-            return
-
-        next_key = self.response_object.dialogue[self.old_key][str(self.input)]["next"]
-
-        if next_key is None: 
+        nextList = self.response_object.dialogue[self.old_key][str(self.input)]["next"]
+        
+        if nextList is None:
             Terminal.return_command()
             return
         
+        if len(nextList) > 1:
+            next_key = nextList[random.randrange(0, len(nextList))]
+        else:
+            next_key = nextList[0]
+            
         self.old_key = next_key
 
         self.response_object.print_at_key(next_key)
@@ -143,4 +145,4 @@ class MultiResponseHandler():
 
         for i in range(1, 5):
             if str(i) in temp_dict:
-                Terminal.add_to_terminal_history(self.dialogue[key][str(i)]["originalResponse"])
+                Terminal.add_to_terminal_history(self.dialogue[key][str(i)]["promptResponse"])

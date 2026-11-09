@@ -2,31 +2,31 @@
   "FirstChat":{
     "Response":"How are you",
     "1":{
-          "originalResponse":"Good",
-          "next":"GoodID"
+          "promptResponse":"Good",
+          "next":["GoodID"]
         },
     "2":{
-          "originalResponse":"Bad",
-          "next":"NextChatID"
+          "promptResponse":"Testing a Thingy",
+          "next":["Test1", "Test2", "Test3"]
         },
     "3":{
-          "originalResponse":"Meh",
-          "next":"NextChatID"
+          "promptResponse":"Meh",
+          "next":["NextChatID"]
         },
     "4":{
-          "originalResponse":"Amazing",
-          "next":"NextChatID"
+          "promptResponse":"Amazing",
+          "next":["NextChatID"]
         }
   },
 
   "GoodID":{
     "Response":"Hell Yeah",
     "1":{
-          "originalResponse":"You?",
-          "next":"YouID"
+          "promptResponse":"You?",
+          "next":["YouID"]
         },
     "2":{
-          "originalResponse":"Bye",
+          "promptResponse":"Bye",
           "next":null
         }
   },
@@ -34,7 +34,31 @@
   "YouID":{
     "Response":"Im totally fine",
     "1":{
-          "originalResponse":"Bye",
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test1":{
+    "Response":"Test1 Response",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test2":{
+    "Response":"Test2 Response",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test3":{
+    "Response":"Test3 Response",
+    "1":{
+          "promptResponse":"Bye",
           "next":null
         }
   },

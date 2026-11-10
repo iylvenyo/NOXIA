@@ -1,5 +1,5 @@
 import gi
-from gi.repository import GLib
+from gi.repository import GLib # type: ignore
 
 gi.require_version("Gtk", "4.0")
 
@@ -32,7 +32,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.headerBar = Gtk.HeaderBar()
         self.headerBar.add_css_class("header_bar")
 
-        self.titleLabel = Gtk.Label(label=self.get_title())
+        self.titleLabel = Gtk.Label(label=self.get_title()) # type: ignore
         self.titleLabel.add_css_class("header_title")
         self.titleLabel.set_halign(Gtk.Align.START)
 

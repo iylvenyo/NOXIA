@@ -67,7 +67,7 @@ class Terminal:
                 Terminal.add_to_terminal_history(Error("InvalidCommandError", command_name))
 
         Terminal.add_to_terminal_history("\n")
-
+        
     # @staticmethod
     # def parse_response(input):
 
@@ -75,6 +75,9 @@ class Terminal:
     @classmethod
     def add_to_terminal_history(cls, text):
         cls.terminalHistory.append(text)
+        if cls.app is not None and cls.app.terminal_window is not None:
+            cls.app.terminal_window.update_termainl_history(cls.terminalHistory)
+        
 
     @staticmethod
     def get_terminal_history():

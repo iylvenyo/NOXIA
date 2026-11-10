@@ -107,6 +107,9 @@ class Chat(Command):
 
         self.input = input_param
 
+        if str(self.input) not in self.response_object.dialogue[self.old_key]:
+            return
+
         nextList = self.response_object.dialogue[self.old_key][str(self.input)]["next"]
         
         if nextList is None:
@@ -117,7 +120,7 @@ class Chat(Command):
             next_key = nextList[random.randrange(0, len(nextList))]
         else:
             next_key = nextList[0]
-            
+        
         self.old_key = next_key
 
         self.response_object.print_at_key(next_key)

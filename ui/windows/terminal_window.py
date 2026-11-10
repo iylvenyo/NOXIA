@@ -15,6 +15,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
             application=app,
             title="NOXIA Terminal",
         )
+        # Set the size of the window and load the css file
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
         self.style = Gtk.CssProvider()
         self.style.load_from_path(str(style_path))
@@ -26,6 +27,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
         self.add_css_class("terminal_window")
 
+        # Create a custom headerbar with a custom title and assign it to the window
         self.headerBar = Gtk.HeaderBar()
         self.headerBar.add_css_class("header_bar")
 
@@ -72,7 +74,6 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.scrollWindow.set_overlay_scrolling(False)
 
         # Termainl Command Line Prompt and Entry
-
         self.commandLinePrompt = Gtk.Label(label=BASE_LINE)
         self.commandLinePrompt.add_css_class("terminal_text")
 
@@ -99,26 +100,33 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
     def on_entry_activate(self, entry):
 
+        # If the entry is empty, exit
         if entry.get_text().strip() == "":
             return
 
+        # Run the command parsing method from the terminal_tool.py file
         Terminal.parse(entry.get_text())
 
+        # Update the terminal
         self.update_termainl_history(Terminal.get_terminal_history())
 
+        # Reset the entry field
         entry.set_text("")
 
     def update_termainl_history(self, terminal_history):
-
+        # If there is only a single entry in the terminal history and it is an empty string, turn off the scroll bar
         if len(terminal_history) == 1 and terminal_history[0].strip() == "":
                 self.scrollWindow.set_visible(False)
+        # If there are zero entries in the terminal history, turn off the scroll bar
         elif len(Terminal.get_terminal_history()) == 0:
             self.scrollWindow.set_visible(False)
+        # Otherwise, there must be at least a single history entry that is not an empty string, turn on the scroll bar
         else:
             self.scrollWindow.set_visible(True)
 
         self.terminalHistory.set_text("\n".join(terminal_history))
 
+        # Give Gtk 20ms to calculate the new terminal history dimensions before automatically scrolling to the bottom of the scroll window
         GLib.timeout_add(20, self.scroll_to_bottom)
         
     def scroll_to_bottom(self):
@@ -129,6 +137,6 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
     def set_command_line_prompt(self, prompt):
         self.commandLinePrompt.set_label(prompt)
-        
+
     def set_command_line_placeholder(self, placeholder):
         self.commandLine.set_placeholder_text(placeholder)

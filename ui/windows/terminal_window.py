@@ -16,6 +16,8 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
             title="NOXIA Terminal",
         )
 
+        self.app = app
+
         # Set the size of the window and load the css file
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
         self.style = Gtk.CssProvider()
@@ -103,6 +105,13 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         controller = Gtk.EventControllerKey()
         controller.connect("key_pressed", self.on_key_pressed)
         self.add_controller(controller)
+
+        self.connect("close_request", self.on_close_request)
+    
+    def on_close_request(self, window):
+        if Terminal.app is not None:
+            Terminal.app.quit()
+        return False
     
     def on_key_pressed(self, controller, keyval, keycode, state):
         match keyval:

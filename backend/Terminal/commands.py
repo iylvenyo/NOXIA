@@ -197,6 +197,25 @@ class Chat(Command):
         # Print the json at next_key's position 
         self.response_object.print_at_key(next_key)
 
+class Open(Command):
+    def __init__(self, window):
+        
+        super().__init__(window)
+
+    def execute(self):
+        match self.argument:
+            case "music_player":
+                from backend.Terminal.terminal_tools import Terminal
+                if Terminal.app is not None:
+                    Terminal.app.present_music_player_window()
+                return
+            case "noxia":
+                from backend.Terminal.terminal_tools import Terminal
+                if Terminal.app is not None:
+                    Terminal.app.present_graphics_window()
+                return
+
+# Helper function
 class MultiResponseHandler():
     def __init__(self, JSON_path):
         

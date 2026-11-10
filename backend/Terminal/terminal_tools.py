@@ -182,7 +182,8 @@ class TerminalCommands:
         "reset": ResetGraphics,
         "quit": Quit,
         "chat": Chat,
-        "help": Help
+        "help": Help,
+        "open": Open
     }
 
     # A master list of all commands which can take command of the terminal

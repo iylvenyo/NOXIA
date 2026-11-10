@@ -29,14 +29,26 @@ class NoxiaApplication(Gtk.Application):
         self.music_player = None
 
     def do_activate(self):
+        self.present_terminal_window()
+
+
+    def present_terminal_window(self):
         if self.terminal_window is None:
             self.terminal_window = NoxiaTerminalWindow(self)
-            # self.music_player = MusicPlayer(self)
-            # self.graphics_window = NoxiaGraphicsWindow(self)
 
         self.terminal_window.present()
-        # self.graphics_window.present()
-        # self.music_player.present()
+
+    def present_graphics_window(self):
+        if self.graphics_window is None:
+            self.graphics_window = NoxiaGraphicsWindow(self)
+
+        self.graphics_window.present()
+
+    def present_music_player_window(self):
+        if self.music_player is None:
+            self.music_player = MusicPlayer(self)
+
+        self.music_player.present()
 
 
 def main():

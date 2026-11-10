@@ -199,7 +199,6 @@ class Chat(Command):
 
 class Open(Command):
     def __init__(self, window):
-        
         super().__init__(window)
 
     def execute(self):

@@ -49,7 +49,6 @@ class Funny(Command):
         randomResponseIndex = random.randint(0, len(self.responseList) - 1)
         
         Terminal.add_to_terminal_history(f"Do I think your joke is funny? {self.responseList[randomResponseIndex]}")
-        Terminal.add_to_terminal_history("\n")
 
 class ChangeBackground(Command):
     def __init__(self):
@@ -92,11 +91,57 @@ class Quit(Command):
         
         Terminal.app.quit()
 
+class Help(Command):
+    def __init__(self):
+        super().__init__(None)
+
+        from graphics.config import ROOT_PATH
+        help_path = ROOT_PATH / "backend" / "json" / "help.json"
+
+        self.inital_json_key = "Start"
+        
+        self.response_object = MultiResponseHandler(help_path)
+        self.old_key = self.inital_json_key
+
+    def execute(self):
+        self.response_object.print_at_key(self.inital_json_key)
+
+    def inject_input(self, input_param):
+            from backend.Terminal.terminal_tools import Terminal
+    
+            self.input = input_param
+    
+            if self.response_object.json is None:
+                return
+    
+            if str(self.input) not in self.response_object.json[self.old_key]:
+                return
+    
+            nextList = self.response_object.json[self.old_key][str(self.input)]["next"]
+            
+            if nextList is None:
+                Terminal.return_command()
+                return
+            
+            if len(nextList) > 1:
+                next_key = nextList[random.randrange(0, len(nextList))]
+            else:
+                next_key = nextList[0]
+            
+            self.old_key = next_key
+    
+            self.response_object.print_at_key(next_key)
+
 class Chat(Command):
     def __init__(self):
         super().__init__(None)
+
+        from graphics.config import ROOT_PATH
+        dialogue_path = ROOT_PATH / "backend" / "json" / "dialogue.json"
+
         self.inital_json_key = "FirstChat"
-        self.response_object = MultiResponseHandler()
+
+        self.response_object = MultiResponseHandler(dialogue_path)
         self.old_key = self.inital_json_key
 
     def execute(self):
@@ -107,10 +152,13 @@ class Chat(Command):
 
         self.input = input_param
 
-        if str(self.input) not in self.response_object.dialogue[self.old_key]:
+        if self.response_object.json is None:
             return
 
-        nextList = self.response_object.dialogue[self.old_key][str(self.input)]["next"]
+        if str(self.input) not in self.response_object.json[self.old_key]:
+            return
+
+        nextList = self.response_object.json[self.old_key][str(self.input)]["next"]
         
         if nextList is None:
             Terminal.return_command()
@@ -126,26 +174,27 @@ class Chat(Command):
         self.response_object.print_at_key(next_key)
 
 class MultiResponseHandler():
-    def __init__(self):
+    def __init__(self, JSON_path):
         
         from backend.content_manager import ContentManager
 
         self.input = input
 
-        content_manager = ContentManager()
+        content_manager = ContentManager(JSON_path)
 
-        self.dialogue = content_manager.dialogue
+        self.json = content_manager.json
 
     def print_at_key(self, key):
         from backend.Terminal.terminal_tools import Terminal
 
-        if self.dialogue is None: return
+        if self.json is None: return
 
-        Terminal.add_to_terminal_history(self.dialogue[key]["Response"])
+        Terminal.add_to_terminal_history(self.json[key]["Response"])
         Terminal.add_to_terminal_history("\n")
 
-        temp_dict = self.dialogue[key]
+        temp_dict = self.json[key]
 
         for i in range(1, 5):
             if str(i) in temp_dict:
-                Terminal.add_to_terminal_history(self.dialogue[key][str(i)]["promptResponse"])
+                text = str(i) + ") " + self.json[key][str(i)]["promptResponse"]
+                Terminal.add_to_terminal_history(text)

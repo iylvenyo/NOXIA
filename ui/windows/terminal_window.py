@@ -76,20 +76,20 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
         self.commandLinePrompt = Gtk.Label(label=BASE_LINE)
         self.commandLinePrompt.add_css_class("terminal_text")
 
-        commandLine = Gtk.Entry()
-        commandLine.set_hexpand(True)
-        commandLine.set_placeholder_text("")
-        commandLine.set_has_frame(False)
-        commandLine.add_css_class("command_line")
-        commandLine.add_css_class("terminal_text")
-        commandLine.connect("activate", self.on_entry_activate)
+        self.commandLine = Gtk.Entry()
+        self.commandLine.set_hexpand(True)
+        self.commandLine.set_placeholder_text("")
+        self.commandLine.set_has_frame(False)
+        self.commandLine.add_css_class("command_line")
+        self.commandLine.add_css_class("terminal_text")
+        self.commandLine.connect("activate", self.on_entry_activate)
 
         commandLineBox = Gtk.Box(
             orientation=Gtk.Orientation.HORIZONTAL,
             spacing=6,
         )
         commandLineBox.append(self.commandLinePrompt)
-        commandLineBox.append(commandLine)
+        commandLineBox.append(self.commandLine)
         
         # Append Termianl History and Command Line to Terminal Box
         terminalBox.append(self.scrollWindow)
@@ -129,3 +129,6 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
     def set_command_line_prompt(self, prompt):
         self.commandLinePrompt.set_label(prompt)
+        
+    def set_command_line_placeholder(self, placeholder):
+        self.commandLine.set_placeholder_text(placeholder)

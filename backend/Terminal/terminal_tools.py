@@ -20,17 +20,17 @@ class Terminal:
         else:
             Terminal.add_to_terminal_history(BASE_LINE + "  " + textBlock)
 
-        stringParts = csv.reader([textBlock], delimiter=';', quotechar='"', skipinitialspace=True)
+        stringParts = next(csv.reader([textBlock], delimiter=';', quotechar='"', skipinitialspace=True))
 
-        for parts in stringParts:
-            reader = csv.reader([parts[0]], delimiter=' ', quotechar='"')
+        for part in stringParts:
+            reader = csv.reader([part], delimiter=' ', quotechar='"')
             subParts = next(reader)
 
             if len(subParts) == 0 or len(subParts) > 2:
                 if not Terminal.commanded:
                     Terminal.add_to_terminal_history(Error("InvalidCommandSyntaxError"))
                 Terminal.add_to_terminal_history("\n")
-                return
+                continue
 
             command_name = subParts[0]
             command_argument = subParts[1] if len(subParts) == 2 else None
@@ -47,7 +47,6 @@ class Terminal:
                 return
 
             if TerminalCommands.containsCommand(command_name):
-
                 command_class = TerminalCommands.commandsDictionary[command_name]
 
                 if len(inspect.signature(command_class).parameters) == 0:
@@ -59,10 +58,11 @@ class Terminal:
                     Terminal.commanded = True
                     Terminal.commanded_command = command
                     Terminal.set_command_line_prompt(RESPONSE_LINE)
+                    Terminal.set_command_line_placeholder("'exit' to backout")
 
                 command.execute()
-                Terminal.add_to_terminal_history("\n")
-                return
+                #Terminal.add_to_terminal_history("\n")
+                continue
             else:
                 Terminal.add_to_terminal_history(Error("InvalidCommandError", command_name))
 
@@ -92,6 +92,7 @@ class Terminal:
         Terminal.commanded = False
         Terminal.commanded_command = None
         Terminal.set_command_line_prompt(BASE_LINE)
+        Terminal.set_command_line_placeholder("")
         Terminal.add_to_terminal_history("\n")
 
     @staticmethod
@@ -100,6 +101,12 @@ class Terminal:
             return
         Terminal.app.terminal_window.set_command_line_prompt(prompt)
 
+    @staticmethod
+    def set_command_line_placeholder(placeholder):
+        if Terminal.app is None or Terminal.app.terminal_window is None:
+            return
+        Terminal.app.terminal_window.set_command_line_placeholder(placeholder)
+
 class TerminalCommands:
     commandsDictionary = {
         "clear": Clear,
@@ -107,11 +114,13 @@ class TerminalCommands:
         "change": ChangeBackground,
         "reset": ResetGraphics,
         "quit": Quit,
-        "chat": Chat
+        "chat": Chat,
+        "help": Help
     }
 
     subControllers = [
-        "chat"
+        "chat",
+        "help"
     ]
     subControllersReturn = [
         "exit"

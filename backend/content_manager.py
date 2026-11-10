@@ -7,23 +7,17 @@ from pathlib import Path
 
 
 class ContentManager:
-    def __init__(self):
-        from graphics.config import ROOT_PATH
-        self.dialogue_file = ROOT_PATH / "backend" / "dialogue.json"
+    def __init__(self, file_path):
+        self.file_path = file_path
 
-        self.dialogue = self.load_dialogue()
+        self.json = self.load_json()
 
-    def load_dialogue(self):
+    def load_json(self):
         try:
-            with open(self.dialogue_file, "r") as file:
+            with open(self.file_path, "r") as file:
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
-            return {
-                "new": ["Hello."],
-                "curious": ["You came back."],
-                "attached": ["I like having you here."],
-                "obsessive": ["You aren't leaving, are you?"],
-            }
+            return
 
     def update_unlocks(self, companion):
         if (
@@ -50,17 +44,17 @@ class ContentManager:
         ):
             companion.unlocked_content.append("special_visuals")
 
-    def get_dialogue_json(self):
-        return self.dialogue
+    def get_json(self):
+        return self.json
 
-    def get_dialogue(self, companion):
-        # check for dialogue based on current mood
-        if companion.mood in self.dialogue:
-            lines = self.dialogue[companion.mood]
-        else:
-            lines = self.dialogue.get(
-                companion.relationship_stage,
-                ["NOXIA watches silently."],
-            )
+    # def get_dialogue(self, companion):
+    #     # check for dialogue based on current mood
+    #     if companion.mood in self.dialogue:
+    #         lines = self.dialogue[companion.mood]
+    #     else:
+    #         lines = self.dialogue.get(
+    #             companion.relationship_stage,
+    #             ["NOXIA watches silently."],
+    #         )
 
-        return random.choice(lines)
+    #     return random.choice(lines)

@@ -1,13 +1,15 @@
 import csv
 import inspect
 from backend.Terminal.commands import *
-from graphics.config import BASE_LINE, RESPONSE_LINE
+from graphics.config import BASE_LINE, RESPONSE_LINE, MAX_COMMAND_HISTORY_LENGTH, MAX_TERMINAL_HISTORY_LENGTH
 
 class Terminal:
     app = None
     terminalHistory = []
+    commandHistory = []
     commanded = False
     commanded_command = None
+    current_command_index = -1
 
     @staticmethod
     def parse(textBlock):
@@ -15,6 +17,8 @@ class Terminal:
         # Return if the text block is empty
         if textBlock.strip() == "":
             return
+
+        Terminal.add_to_command_history(textBlock)
 
         # Change the pre entry text depending on the commanded condition
         if Terminal.commanded:
@@ -86,9 +90,60 @@ class Terminal:
     def add_to_terminal_history(cls, text):
         # Add the text to the terminal history and update the terminal
         cls.terminalHistory.append(text)
+
+        while len(cls.terminalHistory) > MAX_TERMINAL_HISTORY_LENGTH:
+            cls.terminalHistory.pop(0)
+
         if cls.app is not None and cls.app.terminal_window is not None:
             cls.app.terminal_window.update_termainl_history(cls.terminalHistory)
+
+    @staticmethod
+    def add_to_command_history(text):
+        Terminal.commandHistory.append(text)
+        while len(Terminal.commandHistory) > MAX_COMMAND_HISTORY_LENGTH:
+            Terminal.commandHistory.pop(0)
+        Terminal.current_command_index = len(Terminal.commandHistory) - 1
+
+    @staticmethod
+    def cycle_command_history_up():
+        if len(Terminal.commandHistory) == 0:
+            return
         
+        if Terminal.app is None or Terminal.app.terminal_window is None:
+            return
+        current_entry_text = Terminal.app.terminal_window.get_entry_text()
+
+        if Terminal.current_command_index == len(Terminal.commandHistory) - 1 and current_entry_text == "":
+            Terminal.current_command_index = len(Terminal.commandHistory) - 1
+        else:
+            Terminal.current_command_index -= 1
+
+            if Terminal.current_command_index < 0:
+                Terminal.current_command_index = 0
+
+        entry_text = Terminal.commandHistory[Terminal.current_command_index]
+        Terminal.set_entry_text(entry_text)
+
+    @staticmethod
+    def cycle_command_history_down():
+        if len(Terminal.commandHistory) == 0:
+            return
+                
+        Terminal.current_command_index += 1
+
+        if Terminal.current_command_index > len(Terminal.commandHistory) - 1:
+            Terminal.set_entry_text("")
+            Terminal.current_command_index = len(Terminal.commandHistory) - 1
+            return
+
+        entry_text = Terminal.commandHistory[Terminal.current_command_index]
+        Terminal.set_entry_text(entry_text)
+        
+    @staticmethod
+    def set_entry_text(text):
+        if Terminal.app is None or Terminal.app.terminal_window is None:
+            return
+        Terminal.app.terminal_window.set_entry_text(text)
 
     @staticmethod
     def get_terminal_history():

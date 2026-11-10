@@ -23,3 +23,5 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 # Terminal
 BASE_LINE = "$"
 RESPONSE_LINE = ">>>"
+MAX_COMMAND_HISTORY_LENGTH = 50
+MAX_TERMINAL_HISTORY_LENGTH = 200

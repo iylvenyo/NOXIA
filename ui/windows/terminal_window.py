@@ -3,7 +3,7 @@ from gi.repository import GLib
 
 gi.require_version("Gtk", "4.0")
 
-from gi.repository import Gtk # type: ignore
+from gi.repository import Gtk, Gdk # type: ignore
 from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, ROOT_PATH, BASE_LINE, RESPONSE_LINE
 from backend.Terminal.terminal_tools import Terminal
 
@@ -15,6 +15,7 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
             application=app,
             title="NOXIA Terminal",
         )
+
         # Set the size of the window and load the css file
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
         self.style = Gtk.CssProvider()
@@ -98,6 +99,21 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
         self.set_child(terminalBox)
 
+        # Keyboard input controller
+        controller = Gtk.EventControllerKey()
+        controller.connect("key_pressed", self.on_key_pressed)
+        self.add_controller(controller)
+    
+    def on_key_pressed(self, controller, keyval, keycode, state):
+        match keyval:
+            case Gdk.KEY_Up:
+                Terminal.cycle_command_history_up()
+                return True
+            case Gdk.KEY_Down:
+                Terminal.cycle_command_history_down()
+                return True
+        return False
+
     def on_entry_activate(self, entry):
 
         # If the entry is empty, exit
@@ -112,6 +128,12 @@ class NoxiaTerminalWindow(Gtk.ApplicationWindow):
 
         # Reset the entry field
         entry.set_text("")
+
+    def set_entry_text(self, text):
+        self.commandLine.set_text(text)
+
+    def get_entry_text(self):
+        return self.commandLine.get_text()
 
     def update_termainl_history(self, terminal_history):
         # If there is only a single entry in the terminal history and it is an empty string, turn off the scroll bar

@@ -58,6 +58,11 @@ headerbar.header_bar windowcontrols button image {
     min-width: 10px;
     border-radius: 0px;
 }
+.scroll_window overshoot {
+    background: transparent;
+    background-image: none;
+    border: none;
+}
 
 .command_line,
 .command_line:focus{

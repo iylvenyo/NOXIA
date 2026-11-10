@@ -74,16 +74,21 @@ class MusicPlayer(Gtk.ApplicationWindow):
         return False
 
     def on_text_input(self, text_box):
-        input = self.text_buffer.get_text()
 
+        # If there is a current song, pause it and set it to none
         if self.current_song is not None:
             self.current_song.pause()
             self.current_song = None
 
-        if input in songsDictionary:
-            # Get song path and create Gtk.MediaFile object
-            song_path = self.get_song_path(input)
-            self.current_song = Gtk.MediaFile.new_for_filename(str(song_path))
+        # Grab the song media file from the input entry
+        temp = self.get_selected_song()
+
+        # Set the current song and song loaded for the play button
+        self.current_song = temp
+        self.play_btn.song = temp
+
+        # Play the currently selected song
+        if self.current_song is not None:
             self.current_song.set_volume(1)
             self.current_song.play()
 
@@ -92,11 +97,22 @@ class MusicPlayer(Gtk.ApplicationWindow):
 
     def get_song_path(self, song_key):
         if song_key in songsDictionary:
-            print(0)
-            print(defaultPath / songsDictionary[song_key])
             return defaultPath / songsDictionary[song_key]
         else:
             return None
+
+    def get_selected_song(self):
+        input = self.text_buffer.get_text()
+        
+        if input in songsDictionary:
+            # Get song path and create Gtk.MediaFile object
+            song_path = self.get_song_path(input)
+            song = Gtk.MediaFile.new_for_filename(str(song_path))
+
+            return song
+
+        # If the input was not in the dictionary, return none
+        return None
 
 class PlayButton(Gtk.Button):
     # Get music window attributes
@@ -107,19 +123,35 @@ class PlayButton(Gtk.Button):
 
     # Play audio file
     def do_clicked(self):
-        print("play button clicked")
-
         # Update current song
-        if self.parent_window.current_song is None:
+
+        # Get the currently selected song
+        temp = self.parent_window.get_selected_song()
+
+        # If that song exists(the entry was not empty), store that song
+        if temp is not None:
+            self.song = temp
+
+        # Play song from new loading
+        # If the song doesnt exists and the current song from the main player also doesnt exist,
+        # get the selected song, play it, and store it for later
+        if self.song is None and self.parent_window.current_song is None:
             self.parent_window.on_text_input(self.parent_window.text_box)
-        else:
             self.song = self.parent_window.current_song
+        else:
+            # Resume or restart song
+            # if the song from both the player and the play button exists, check if they are the same,
+            # if they are the same, check if the song has ended, restart if true, and play the song regardless
+            if self.song == self.parent_window.current_song and self.song is not None:
+                # Restart song if it has ended.
+                if self.song.get_ended():
+                    self.song.seek(0)
 
-        # Restart song if it has ended.
-        if self.song.get_ended():
-            self.song.seek(0)
-
-        self.song.play()
+                self.song.play()
+            else:
+                # If the song from the player and play button are different, grab the song from the selection, play it, and store it for later
+                self.parent_window.on_text_input(self.parent_window.text_box)
+                self.song = self.parent_window.current_song
 
 class PauseButton(Gtk.Button):
 
@@ -131,8 +163,8 @@ class PauseButton(Gtk.Button):
 
     # Pause audio file
     def do_clicked(self):
-        print("pause button clicked")
-
-        if self.parent_window.current_song is None: return
+        if self.parent_window.current_song is None:
+            return
+        
         self.song = self.parent_window.current_song
         self.song.pause()

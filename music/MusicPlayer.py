@@ -107,8 +107,8 @@ class PlayButton(Gtk.Button):
     def do_clicked(self):
 
         # Restart song if it has ended.
-        if self.song.get_ended():
-            self.song.seek(0)
+        if self.parent_window.current_song.get_ended():
+            self.parent_window.current_song.seek(0)
 
         self.parent_window.current_song.play()
 

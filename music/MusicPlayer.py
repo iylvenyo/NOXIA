@@ -50,6 +50,9 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.pause_btn = PauseButton(self)
             self.pause_btn.add_css_class("pause_button")
 
+            # Volume Slider
+            self.vol_slider = VolumeSlider(parent_window=self)
+
             # Text box
             self.text_box = Gtk.Entry()
             self.text_buffer = Gtk.EntryBuffer()
@@ -60,15 +63,17 @@ class MusicPlayer(Gtk.ApplicationWindow):
             # Make grid
             self.button_grid = Gtk.Grid()
 
-            # Add buttons and text box to grid
+            # Add buttons, slider, and text box to grid
             self.button_grid.attach(self.play_btn, 1, 1, 1, 1)
             self.button_grid.attach(self.pause_btn, 2, 1, 1, 1)
             self.button_grid.attach(self.text_box, 1, 2, 1, 1)
+            self.button_grid.attach(self.vol_slider, 1, 3, 1, 1)
 
             # Add grid to window and add css to grid
             self.set_child(self.button_grid)
             self.button_grid.add_css_class("button_grid")
 
+    # When text box for song choice is activated
     def on_text_input(self, text_box):
         input = self.text_buffer.get_text()
 
@@ -85,7 +90,6 @@ class MusicPlayer(Gtk.ApplicationWindow):
             # Get song path and create Gtk.MediaFile object
             song_path = self.get_song_path(input)
             self.current_song = Gtk.MediaFile.new_for_filename(str(song_path))
-            self.current_song.set_volume(1)
 
         # clear buffer
         self.text_buffer.delete_text(0, self.text_buffer.get_length())
@@ -124,3 +128,22 @@ class PauseButton(Gtk.Button):
 
         if self.parent_window.current_song is None: return
         self.parent_window.current_song.pause()
+
+class VolumeSlider(Gtk.Scale):
+
+    # Initialize volume slider with range 0.0 to 1.0
+    def __init__(self, parent_window):
+
+        # Set parent window and make necessary object for parent class initializer
+        adjustment_vals = Gtk.Adjustment.new(0.5, 0.0, 1.0, 0.1, 0.0, 0.0)
+        self.parent_window = parent_window
+
+        super().__init__(
+        orientation = Gtk.Orientation.HORIZONTAL,
+        adjustment = adjustment_vals
+        )
+
+    # Update volume on slider value change
+    def do_value_changed(self):
+        if self.parent_window is not None:
+            self.parent_window.current_song.set_volume(self.get_value())

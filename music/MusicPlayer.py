@@ -21,6 +21,8 @@ class MusicPlayer(Gtk.ApplicationWindow):
     def __init__(self, app):
             super().__init__(application = app, title = "NOXIA Music Player")
 
+            self.app = app
+
             # Set size
             self.set_default_size(300, 300)
 
@@ -64,6 +66,12 @@ class MusicPlayer(Gtk.ApplicationWindow):
             # Add grid to window and add css to grid
             self.set_child(self.button_grid)
             self.button_grid.add_css_class("button_grid")
+
+            self.connect("close_request", self.on_close_request)
+
+    def on_close_request(self, window):
+        self.app.music_player = None
+        return False
 
     def on_text_input(self, text_box):
 
@@ -160,4 +168,3 @@ class PauseButton(Gtk.Button):
         
         self.song = self.parent_window.current_song
         self.song.pause()
-

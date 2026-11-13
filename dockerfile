@@ -55,6 +55,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxi6 \
     libxkbcommon0 \
     libxkbcommon-x11-0 \
+    dbus-x11 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a Python virtual environment

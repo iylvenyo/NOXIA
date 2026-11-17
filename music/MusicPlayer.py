@@ -78,6 +78,8 @@ class MusicPlayer(Gtk.ApplicationWindow):
             self.connect("close_request", self.on_close_request)
 
     def on_close_request(self, window):
+        self.current_song.pause()
+        self.current_song = None
         self.app.music_player = None
         return False
 
@@ -127,6 +129,7 @@ class PlayButton(Gtk.Button):
     def __init__(self, parent_window):
         super().__init__(label="play")
         self.parent_window = parent_window
+        self.song = parent_window.current_song
 
     # Play audio file
     def do_clicked(self):
@@ -166,6 +169,7 @@ class PauseButton(Gtk.Button):
     def __init__(self, parent_window):
         super().__init__(label="pause")
         self.parent_window = parent_window
+        self.song = parent_window.current_song
 
     # Pause audio file
     def do_clicked(self):

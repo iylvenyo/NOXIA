@@ -1,0 +1,44 @@
+{
+    "Start":{
+    "Response":"Hello, Welcome to the NOXIA Terminal\n\nI will help you understand syntax and all I am capable of!\n\nTo get started, please select an option below:",
+    "1":{
+            "promptResponse":"Syntax",
+            "next":["SyntaxHelp"]
+        },
+    "2":{
+            "promptResponse":"Commands",
+            "next":["CommandsList"]
+        },
+    "3":{
+            "promptResponse":"About",
+            "next":["AboutNOXIA"]
+        },
+    "4":{
+            "promptResponse":"Exit",
+            "next":null
+        }
+    
+    },
+    "SyntaxHelp":{
+    "Response":"Welcome to this explaination for how the NOXIA Terminal syntax functions\n\nThe terminal works by looking for <command> and <argument> pairs\nExample: 'minigame 1'\n\nIf you want to include an argument with multiple words, encapsulate them in quotes\nExample: 'funny \"People are usually shocked when they find out I'm not a very good electrician\"'\n\nTo run multiple commands at once, seperate commands with a semicolon ';'\nExample: 'clear;chat'\n\nYou have now learned the syntax for the NOXIA Terminal, goodjob!",
+        "1":{
+                "promptResponse":"Back",
+                "next":["Start"]
+            }
+    },
+
+    "CommandsList":{
+        "Response":"[help] Provides information about the NOXIA Terminal\n[clear] Removes all history from the terminal\n[quit] Terminates the program\n[chat] Starts a chat with NOXIA\n[change] Changes NOXIA's background\n[reset] Resets the programs graphics and simulations\n[funny] Evaluates a joke if one is provided",
+        "1":{
+                "promptResponse":"Back",
+                "next":["Start"]
+            }
+    },
+    "AboutNOXIA":{
+        "Response":"NOXIA is a 2026 project developed by Jay Polakam, Aidan Chen, Zach Wiley, \nSeth Jackson, and Deven Gurule for a class at the University of Colorado Springs Colorado\n\nWe all wanted to create something which was fun and laid back\nOur goal was to create something which was art inspired and fun\nThese ideas lead us to creating a piece of software which invokes the feelings\nof old computing while being simple enough for the younger generation to enjoy it\nWe hope NOXIA inspires you to create something fun for yourself and others\n\nThat is NOXIA's mission, to put art in the world",
+        "1":{
+                "promptResponse":"Back",
+                "next":["Start"]
+            }
+    }
+}

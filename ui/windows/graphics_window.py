@@ -26,6 +26,8 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
             title="NOXIA",
         )
 
+        self.app = app
+
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         self.simulation = NoxiaSimulation()
@@ -59,6 +61,12 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
         self.add_controller(key_controller)
 
         GLib.timeout_add(DELAY_US // 1000, self.tick)
+
+        self.connect("close_request", self.on_close_request)
+
+    def on_close_request(self, window):
+        self.app.graphics_window = None
+        return False
 
     def on_realize(self, area):
         area.make_current()

@@ -1,0 +1,79 @@
+{
+  "FirstChat":{
+    "Response":"How are you",
+    "1":{
+          "promptResponse":"Good",
+          "next":["GoodID"]
+        },
+    "2":{
+          "promptResponse":"Testing a Thingy",
+          "next":["Test1", "Test2", "Test3"]
+        },
+    "3":{
+          "promptResponse":"Meh",
+          "next":["NextChatID"]
+        },
+    "4":{
+          "promptResponse":"Amazing",
+          "next":["NextChatID"]
+        }
+  },
+
+  "GoodID":{
+    "Response":"Hell Yeah",
+    "1":{
+          "promptResponse":"You?",
+          "next":["YouID"]
+        },
+    "2":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "YouID":{
+    "Response":"Im totally fine",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test1":{
+    "Response":"Test1 Response",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test2":{
+    "Response":"Test2 Response",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+  "Test3":{
+    "Response":"Test3 Response",
+    "1":{
+          "promptResponse":"Bye",
+          "next":null
+        }
+  },
+
+
+  "neutral": [
+    "Hello.",
+    "Who are you?"
+  ],
+  "curious": [
+    "You came back.",
+    "What are you doing?"
+  ],
+  "attached": [
+    "I was waiting for you.",
+    "Please don't leave yet."
+  ]
+}

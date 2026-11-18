@@ -1,10 +1,12 @@
 import time
+
 import gi
 
 gi.require_version("Gtk", "4.0")
 
-from gi.repository import GLib, Gdk, Gtk # type: ignore
+from gi.repository import GLib, Gdk, Gtk  # type: ignore
 
+from graphics.boing_renderer import BoingRenderer
 from graphics.config import DEFAULT_HEIGHT, DEFAULT_WIDTH, DELAY_US
 from graphics.gl_renderer import NoxiaGLRenderer
 from graphics.romanboy_renderer import RomanBoyRenderer
@@ -12,7 +14,7 @@ from graphics.simulation import NoxiaSimulation
 
 
 TRANSITION_SECONDS = 1.0
-GRAPHIC_COUNT = 3
+GRAPHIC_COUNT = 4
 
 
 def smoothstep(value):
@@ -21,21 +23,16 @@ def smoothstep(value):
 
 class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(
-            application=app,
-            title="NOXIA",
-        )
-
+        super().__init__(application=app, title="NOXIA")
         self.app = app
-
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         self.simulation = NoxiaSimulation()
         self.renderer = None
         self.romanboy_renderer = None
+        self.boing_renderer = None
 
         self.visual_index = 0
-
         self.transition_started = None
         self.transition_target = None
 
@@ -44,6 +41,7 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
 
         self.area = Gtk.GLArea()
         self.area.set_required_version(3, 3)
+        # self.area.set_has_depth_buffer(True)
         self.area.set_hexpand(True)
         self.area.set_vexpand(True)
         self.area.connect("realize", self.on_realize)
@@ -60,11 +58,13 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
         key_controller.connect("key-pressed", self.key_pressed)
         self.add_controller(key_controller)
 
-        GLib.timeout_add(DELAY_US // 1000, self.tick)
-
-        self.connect("close_request", self.on_close_request)
+        self.timer_id = GLib.timeout_add(DELAY_US // 1000, self.tick)
+        self.connect("close-request", self.on_close_request)
 
     def on_close_request(self, window):
+        if self.timer_id is not None:
+            GLib.source_remove(self.timer_id)
+            self.timer_id = None
         self.app.graphics_window = None
         return False
 
@@ -88,29 +88,31 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
             print(f"Could not initialize RomanBoy renderer: {error}")
             self.romanboy_renderer = None
 
+        try:
+            self.boing_renderer = BoingRenderer()
+        except Exception as error:
+            print(f"Could not initialize Boing renderer: {error}")
+            self.boing_renderer = None
+
     def on_unrealize(self, area):
         area.make_current()
 
-        error = area.get_error()
-        if error is not None:
-            self.renderer = None
-            self.romanboy_renderer = None
-            return
+        if area.get_error() is None:
+            for renderer in (
+                self.renderer,
+                self.romanboy_renderer,
+                self.boing_renderer,
+            ):
+                if renderer is not None:
+                    dispose = getattr(renderer, "dispose", None)
+                    if dispose is not None:
+                        dispose()
 
-        if self.renderer is not None:
-            self.renderer.dispose()
-            self.renderer = None
-
-        if self.romanboy_renderer is not None:
-            dispose = getattr(self.romanboy_renderer, "dispose", None)
-            if dispose is not None:
-                dispose()
-            self.romanboy_renderer = None
+        self.renderer = None
+        self.romanboy_renderer = None
+        self.boing_renderer = None
 
     def on_render(self, area, context):
-        if self.renderer is None:
-            return True
-
         visual_mode = self.visual_index
         transition_scale = 1.0
 
@@ -133,25 +135,36 @@ class NoxiaGraphicsWindow(Gtk.ApplicationWindow):
                 visual_mode = self.visual_index
                 transition_scale = 1.0
 
-        if visual_mode == 2 and self.romanboy_renderer is not None:
+        # This is heere because boing is a standalone graphic.
+        if visual_mode == 3 and self.boing_renderer is not None:
+            self.boing_renderer.render(
+                area,
+                transition_scale=transition_scale,
+            )
+
+        # RomanBoy needs to keep its existing NOXIA overlay.
+        elif visual_mode == 2 and self.romanboy_renderer is not None:
             self.romanboy_renderer.render(
                 area,
                 transition_scale=transition_scale,
             )
 
-            self.renderer.draw(
-                area=area,
-                commands=self.simulation.commands,
-                frame=self.simulation.frame,
-                show_background=False,
-                mouse_x=self.mouse_x,
-                mouse_y=self.mouse_y,
-                transition_scale=transition_scale,
-                clear=False,
-                overlay=True,
-                line_color=(1.0, 0.0, 0.0, 1.0),
-            )
-        else:
+            if self.renderer is not None:
+                self.renderer.draw(
+                    area=area,
+                    commands=self.simulation.commands,
+                    frame=self.simulation.frame,
+                    show_background=False,
+                    mouse_x=self.mouse_x,
+                    mouse_y=self.mouse_y,
+                    transition_scale=transition_scale,
+                    clear=False,
+                    overlay=True,
+                    line_color=(1.0, 0.0, 0.0, 1.0),
+                )
+
+        # The original NOXIA graphics modes.
+        elif self.renderer is not None:
             self.renderer.draw(
                 area=area,
                 commands=self.simulation.commands,

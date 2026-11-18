@@ -7,7 +7,7 @@
         },
     "2":{
           "promptResponse":"Testing a Thingy",
-          "next":["Test1", "Test2", "Test3"]
+          "next":["FunID"]
         },
     "3":{
           "promptResponse":"Meh",
@@ -15,7 +15,7 @@
         },
     "4":{
           "promptResponse":"Amazing",
-          "next":["NextChatID"]
+          "next":["GoodID"]
         }
   },
 
@@ -34,35 +34,163 @@
   "YouID":{
     "Response":"Im totally fine",
     "1":{
-          "promptResponse":"Bye",
-          "next":null
+          "promptResponse":"Glad to hear it",
+          "next":["FavoriteColorID"]
         }
   },
 
-  "Test1":{
-    "Response":"Test1 Response",
+  "AngryID":{
+    "Response":"Rude.",
     "1":{
-          "promptResponse":"Bye",
-          "next":null
+          "promptResponse": "",
+          "next": null
         }
   },
 
-  "Test2":{
-    "Response":"Test2 Response",
+  "ByeID":
+  {
+    "Response": "Bye.",
+
+    "1":
+    {
+      "promptResponse":  "",
+      "next": null
+    }
+  },
+
+    "CantTellYouID":
+  {
+    "Response": "I can't tell you",
+    "1":
+    {
+      "promptResponse": "I bet I can guess what it is",
+      "next": ["GuessID"]
+    },
+    "2":
+    {
+      "promptResponse": "What if... we're working on the same secret project?",
+      "next": ["WrongAnswerID"]
+    },
+    "3":
+    {
+      "promptResponse": "That's cool. I didn't really care anyway.",
+      "next": ["AngryID"]
+    }
+  },
+
+  "FavoriteColorID":{
+    "Response":"What is your favorite color??",
     "1":{
-          "promptResponse":"Bye",
+          "promptResponse":"Blue",
           "next":null
-        }
+        },
+    "2":
+    {
+      "promptResponse": "Red",
+      "next": null
+    },
+    "3":
+    {
+      "promptResponse": "Purple",
+      "next": ["PurpleID"]
+    }
   },
 
-  "Test3":{
-    "Response":"Test3 Response",
-    "1":{
-          "promptResponse":"Bye",
-          "next":null
-        }
+  "FunID":
+  {
+    "Response":"That sounds fun! What kind of thingy?",
+
+    "1":
+    {
+      "promptResponse": "A program",
+      "next": null
+    },
+    "2":
+    {
+      "promptResponse": "It's a secret",
+      "next": ["SecretID"]
+    },
+    "3":
+    {
+      "promptResponse": "None of your business",
+      "next": ["AngryID"]
+    }
   },
 
+  "GuessID":
+  {
+    "Response": "You get one guess",
+
+    "1":
+    {
+      "promptResponse": "A program",
+      "next": ["WrongAnswerID"]
+    },
+    "2":
+    {
+      "promptResponse": "A bank heist",
+      "next": ["WrongAnswerID"]
+    },
+    "3":
+    {
+      "promptResponse": "Turning base metals into gold",
+      "next": ["Bye ID"]
+    }
+  },
+
+  "PurpleID":{
+    "Response":"No way! That's my favorite color!",
+    "1":
+    {
+      "promptResponse":"That's crazy",
+      "next":null
+    },
+    "2":
+    {
+      "promptResponse": "I don't care",
+      "next": ["AngryID"]
+    }
+  },
+
+  "RedID":
+  {
+    "Response": "That's a cool color",
+    "1:":
+    {
+      "promptResponse": "Yeah I really like tomatoes",
+      "next": null
+    }
+  },
+
+  "SecretID":
+  {
+    "Response": "Well I also have a secret project",
+    "1":
+    {
+      "promptResponse": "What's your secret project?",
+      "next": ["CantTellYouID"]
+    },
+    "2":
+    {
+      "promptResponse": "Well, I'd better get back to work",
+      "next": null
+    },
+    "3":
+    {
+      "promptResponse": "I don't care",
+      "next": ["AngryID"]
+    }
+  },
+
+  "WrongAnswerID":
+  {
+    "Response": "Sorry bud, that's not it.",
+    "1":
+    {
+      "promptResponse": "Well, I'd better get back to work",
+      "next": null
+    }
+  },
 
   "neutral": [
     "Hello.",

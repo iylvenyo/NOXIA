@@ -21,6 +21,8 @@ class BaseCharacter:
                 self.health = 0
                 return f"{self.class_name} has been defeated"
 
+        if self.is_dodging:
+            return f"{self.class_name} dodged the attack"
 
         if self.health > damage:
             self.health -= damage
@@ -94,3 +96,21 @@ class Mage(BaseCharacter):
         }
 
         
+class Rogue(BaseCharacter):
+
+    def __init__(self):
+        super().__init__("Rogue", 150, 0.6)
+
+        self.moveset = {
+            "Stab": 100, 
+            "Backstab": 200,
+            "Dodge": 0,
+            "Heal": 15,
+        }
+
+        self.is_dodging = False
+
+
+    def dodge(self):
+        self.is_dodging = True
+        return f"{self.class_name} is dodging the next attack"

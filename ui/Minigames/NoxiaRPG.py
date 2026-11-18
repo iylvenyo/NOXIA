@@ -14,6 +14,7 @@ class NoxiaRPG(Gtk.ApplicationWindow):
             "Warrior":CharacterClasses.Warrior,
             "Tank":CharacterClasses.Tank,
             "Mage":CharacterClasses.Mage,
+            "Rogue":CharacterClasses.Rogue,
         }
 
         self.enemies_defeated = 0
@@ -158,7 +159,9 @@ class NoxiaRPG(Gtk.ApplicationWindow):
         elif move_name == "Heal":
             self.output_text(f"Player has used heal")
             self.output_text(f"Player {self.player_character.heal(self.player_character.moveset[move_name])}")
-            
+
+        elif move_name == "Dodge":
+            self.output_text(f"Player {self.player_character.dodge()}")
 
         else:
             self.output_text(f"Player {self.player_character.class_name} uses {move_name}")
@@ -184,7 +187,9 @@ class NoxiaRPG(Gtk.ApplicationWindow):
         elif random_move == "Heal":
             self.output_text(f"Enemy has used heal")
             self.output_text(f"Enemy {self.enemy_character.heal(self.enemy_character.moveset[random_move])}")
-                    
+
+        elif random_move == "Dodge":
+            self.output_text(f"Enemy {self.player_character.dodge()}")
         
         else:
             self.output_text(f"Enemy {self.enemy_character.class_name} uses {random_move}")

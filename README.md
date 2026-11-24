@@ -24,7 +24,16 @@ pacman -Syu
 then install the stuff NOXIA needs:
 
 ```bash
-pacman -S mingw-w64-ucrt-x86_64-gtk4 mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-gobject mingw-w64-ucrt-x86_64-python-cairo git
+pacman -S --needed \
+  mingw-w64-ucrt-x86_64-python \
+  mingw-w64-ucrt-x86_64-gtk4 \
+  mingw-w64-ucrt-x86_64-python-gobject \
+  mingw-w64-ucrt-x86_64-python-cairo \
+  mingw-w64-ucrt-x86_64-python-numpy \
+  mingw-w64-ucrt-x86_64-python-pyopengl \
+  mingw-w64-ucrt-x86_64-gst-plugins-base \
+  mingw-w64-ucrt-x86_64-gst-plugins-good \
+  mingw-w64-ucrt-x86_64-pyinstaller
 ```
 clone and cd into the project, then run it
 

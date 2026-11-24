@@ -1,4 +1,3 @@
-
 services:
   noxia:
     build: .
@@ -6,6 +5,8 @@ services:
     ipc: host
     environment:
       DISPLAY: ${DISPLAY:-:0}
+      PULSE_SERVER: "unix:/mnt/wslg/PulseServer"
+      PYOPENGL_PLATFORM: "egl"
       GDK_BACKEND: x11
       GSK_RENDERER: cairo
       GTK_A11Y: none

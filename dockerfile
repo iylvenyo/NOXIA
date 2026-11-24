@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # GTK4 dependencies
     gir1.2-gtk-4.0 \
     libgtk-4-1 \
+    libgtk-4-media-gstreamer \
     \
     # Cairo and PyGObject build dependencies
     libcairo2 \
